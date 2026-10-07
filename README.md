@@ -14,13 +14,14 @@ El proyecto fue creado utilizando Create React App (CRA).
 Para trabajar con el proyecto es necesario tener instalado:
 
 Node.js
+
 npm
 
 # Instalación
 
 Después de clonar el repositorio, ubicarse dentro de la carpeta del proyecto:
 
-cd <carpeta-de-proyecto>
+cd (carpeta-de-proyecto)
 
 Instalar las dependencias:
 
