@@ -1,0 +1,163 @@
+.login{
+    position: relative;
+    width: fit-content;
+    min-height: fit-content;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #F4F6F3;
+    font-family: 'Lexend-Semibold',system-ui,sans-serif;
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 100%;
+}
+
+.login .header{
+    background: #1F3B36;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.login .header .header-container{
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.login .header .title{
+    font-family: 'BricolageGrotesque-Bold',sans-serif;
+    color: #fff;
+    font-size: 30px;
+    padding-top: 20px;
+}
+
+.login .header .subtitle{
+    color: rgb(185, 204, 198);
+    height: 45px;
+}
+
+.login .data{
+    color: #8FA9A1;
+    font-size: 13px;
+    display: none;
+}
+
+.form{
+    padding: 20px 16px;
+    color: #1F2A2E;
+    justify-content: flex-start;
+}
+
+.form .form-container{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form .form-title{
+    font-family: 'BricolageGrotesque-Bold',sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    margin: 0;
+}
+
+.form .input{
+    height: 70px;
+    gap: 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.form .input .input-label{
+    font-family: 'Lexend-Medium',sans-serif;
+    margin: 0;
+    height: 18px;
+    font-weight: 500;
+    font-size: 16px;
+    color: rgb(31, 42, 46);
+}
+
+.form .input-field{
+    height: 48px;
+    width: 100%;
+    opacity: 1;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: #141413;
+    text-decoration-color: rgb(31, 42, 46);
+    font-size: 16px;
+    padding-left: 14px;
+    padding-right: 14px;
+    flex-grow: 0;
+}
+
+.form .login-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    border-radius: 10px;
+    font-family: 'Lexend-SemiBold',sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    background: #2F6B5E;
+    color: #fff;
+    text-decoration: none;
+    border: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form .register{
+    height: 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5B6B66;
+    line-height: 1.45;
+}
+
+.form .register .register-link{
+    line-height: 1.45;
+    color: rgb(47, 107, 94);
+    margin:0;
+}
+
+@media (min-width: 768px) {
+    .login{
+        display: flex;
+        flex-direction: row;
+    }
+
+    .login .header{
+        width: 520px;
+        padding: 56px;
+    }
+
+    .login .header .header-container{
+        width: 408px;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .login .header .title{
+        font-size: 40px;
+        line-height: 1.1;
+        font-weight: 700;
+        margin: 0;
+        padding-bottom: 20px;
+    }
+
+    .login .data{
+        display: block;
+    }
+}
