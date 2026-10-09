@@ -1,7 +1,48 @@
+import { useState } from 'react';
 import './Login.css';
 import Logo from '../../components/Logo/Logo';
 
 function Login() {
+    const [email, setEmail] = useState('');
+    const [password, setpassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    async function iniciarSesion(event) {
+        event.preventDefault();
+        setError('');
+        setLoading(true);
+
+        try {
+            const respuesta = await fetch(
+                'http://localhost:3000/api/auth/login',{ //endpoint de backend
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                }
+            );
+
+            if (!respuesta.ok) {
+                setError('Email o contraseña incorrectos.');
+                return;
+            }
+            alert('Inicio de sesión exitoso');
+            // Redirigir a aulas
+
+        } catch (error) {
+            setError(
+                'No se pudo conectar con el servidor. Intentá nuevamente.'
+            );
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <div className="login">
             <div className="header">
@@ -14,23 +55,36 @@ function Login() {
                     <p className='data'>UNSAM · Proyecto Integrador I · Grupo 7</p>
                 </div>
             </div>
-            <div className="form">
+
+            <form onSubmit={iniciarSesion} className="form">
                 <div className='form-container'>
                     <p className="form-title">Ingresá a tu cuenta</p>
+
                     <div className="input">
                         <p className="input-label">Email</p>
-                        <input className="input-field" type="text" placeholder="example@email.com"/>
+                        <input id="email" className="input-field" type="email" placeholder="example@email.com" value={email} onChange={(event) => setEmail(event.target.value)} required/>
                     </div>
+
                     <div className="input">
                         <p className="input-label">Contraseña</p>
-                        <input className="input-field" type="password" placeholder="Contraseña" />
+                        <input id="password" className="input-field" type="password" placeholder="Contraseña" value={password} onChange={(event) => setpassword(event.target.value)} required/>
                     </div>
-                    <button className="login-button">Ingresar</button>
+
+                    {error && (
+                        <p className="login-error" role="alert">
+                            {error}
+                        </p>
+                    )}
+
+                    <button className="login-button" type="submit" disabled={loading}>
+                        {loading ? 'Ingresando...' : 'Ingresar'}
+                    </button>
+
                     <div className="register">
                         <p>¿No tenés cuenta? <a href="/register" className="register-link">Registrate</a></p>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     );
 }

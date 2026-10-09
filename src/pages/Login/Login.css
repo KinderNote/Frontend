@@ -14,10 +14,11 @@
 
 .login .header{
     background: #1F3B36;
-    padding: 28px 24px;
+    padding: 56px 24px 36px;
     display: flex;
     flex-direction: column;
     gap: 14px;
+    border-radius: 0 0 28px 28px;
     flex-shrink: 0;
 }
 
@@ -47,7 +48,6 @@
 .form{
     padding: 20px 16px;
     color: #1F2A2E;
-    justify-content: flex-start;
 }
 
 .form .form-container{
@@ -87,10 +87,9 @@
 .form .input-field{
     height: 48px;
     width: 100%;
-    opacity: 1;
     border-radius: 10px;
     border-width: 1px;
-    border-color: #141413;
+    border-color: rgb(91, 107, 102, 0.2);
     text-decoration-color: rgb(31, 42, 46);
     font-size: 16px;
     padding-left: 14px;
@@ -116,11 +115,13 @@
 }
 
 .form .register{
+    font-family: 'Lexend-SemiBold',sans-serif;
     height: 18px;
     font-size: 14px;
     font-weight: 600;
     color: #5B6B66;
     line-height: 1.45;
+    text-align: center;
 }
 
 .form .register .register-link{
@@ -138,6 +139,7 @@
     .login .header{
         width: 520px;
         padding: 56px;
+        border-radius: 0;
     }
 
     .login .header .header-container{
@@ -160,4 +162,19 @@
     .login .data{
         display: block;
     }
+
+    .form{
+        max-width: 400px;
+        margin: auto auto;
+    }
+
+    .form .register{
+        text-align: left;
+    }
+}
+
+.login-error {
+    color: #c62828;
+    font-size: 14px;
+    margin-bottom: 12px;
 }
