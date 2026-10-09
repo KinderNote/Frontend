@@ -1,0 +1,175 @@
+.register{
+    min-height: fit-content;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #F4F6F3;
+    font-family: 'Lexend-SemiBold',system-ui,sans-serif;
+    color: #1F2A2E;
+    overflow: hidden;
+    gap: 14px;
+}
+
+.register .header{
+    display: none;
+}
+
+.register .register-container{
+    min-height: fit-content;
+    height: 100vh;
+    padding: 20px 24px;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.register .volver-button{
+    width: fit-content;
+    color: #2F6B5E;
+    font-size: 15px;
+    text-decoration: none;
+    border:none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.register .volver-button:hover {
+    color: #1F2A2E;
+}
+.register .register-title{
+    font-family: 'BricolageGrotesque-SemiBold',sans-serif;
+    font-size: 30px;
+}
+.register .register-form,
+.register .nombre-apellido{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.register .input-label{
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+.register .input-required{
+    color:#A23B2A;
+}
+
+.register .input-field{
+    height: 48px;
+    width: 100%;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: rgb(91, 107, 102, 0.2);
+    text-decoration-color: rgb(31, 42, 46);
+    font-size: 16px;
+    padding-left: 14px;
+    padding-right: 14px;
+    flex-grow: 0;
+}
+
+.register .validation-password{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid #DCE3E0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+}
+.register .validation-item{
+    display: flex;
+    flex-direction: row;
+    color: #2F6B5E;
+    gap: 6px;
+    align-items: center;
+}
+.register .register-button{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 52px;
+    border-radius: 12px;
+    font: 500 16px 'Lexend-SemiBold',sans-serif;
+    background: #2F6B5E;
+    color: #fff;
+    text-decoration: none;
+}
+
+.register .login{
+    margin-top: 14px;
+    font-family: 'Lexend-SemiBold',sans-serif;
+    height: 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5B6B66;
+    line-height: 1.45;
+    text-align: center;
+}
+
+.register .login .login-link{
+    line-height: 1.45;
+    color: rgb(47, 107, 94);
+    margin:0;
+}
+
+@media (min-width: 768px) {
+    .register{
+        flex-direction: row;
+        gap: 0;
+
+    }
+    .register .header{
+        background: #1F3B36;
+        width: 520px;
+        padding: 56px 24px 36px;
+        display: flex;
+        display: block;
+        flex-direction: column;
+        gap: 14px;
+        border-radius: 0;
+        flex-shrink: 0;
+    }
+    .register .header .header-container{
+        width: 408px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .register .header .title{
+        font-family: 'BricolageGrotesque-Bold',sans-serif;
+        color: #fff;
+        font-size: 40px;
+        line-height: 1.1;
+        font-weight: 700;
+    }
+    .register .data{
+        color: #8FA9A1;
+        font-size: 13px;
+    }
+    .register .volver-button{
+        display: none;
+    }
+    .register .register-container{
+        height: auto;
+        min-height: fit-content;
+        padding: 20px 0;
+        gap: 16px;
+        width: 460px;
+        margin: auto auto;
+    }
+    .register .register-container .login{
+        text-align: left;
+    }
+}
+.register-error {
+    color: #c62828;
+}

@@ -4,7 +4,7 @@ import Logo from '../../components/Logo/Logo';
 
 function Login() {
     const [email, setEmail] = useState('');
-    const [password, setpassword] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -35,9 +35,7 @@ function Login() {
             // Redirigir a aulas
 
         } catch (error) {
-            setError(
-                'No se pudo conectar con el servidor. Intentá nuevamente.'
-            );
+            setError('No se pudo conectar con el servidor. Intentá nuevamente.');
         } finally {
             setLoading(false);
         }
@@ -67,7 +65,7 @@ function Login() {
 
                     <div className="input">
                         <p className="input-label">Contraseña</p>
-                        <input id="password" className="input-field" type="password" placeholder="Contraseña" value={password} onChange={(event) => setpassword(event.target.value)} required/>
+                        <input id="password" className="input-field" type="password" placeholder="Contraseña" value={password} onChange={(event) => setPassword(event.target.value)} required/>
                     </div>
 
                     {error && (
