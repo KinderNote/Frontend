@@ -15,14 +15,14 @@ function Login() {
 
         try {
             const respuesta = await fetch(
-                'http://localhost:3000/api/auth/login',{ //endpoint de backend
+                'http://localhost:8080/kindernote/api/maestra/login',{ //endpoint de backend
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         email: email,
-                        password: password
+                        contrasenia: password
                     })
                 }
             );

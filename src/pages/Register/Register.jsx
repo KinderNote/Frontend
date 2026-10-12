@@ -36,18 +36,20 @@ function Register() {
             setError('');
         try {
             const response = await fetch(
-                'http://localhost:3000/api/auth/register', { //endpoint de backend
+                'http://localhost:8080/kindernote/api/maestra/registro', { //endpoint de backend
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ name, lastname, email, password })
+                    body: JSON.stringify({ nombre:name, apellido:lastname, email:email, contrasenia:password })
                 }
             );
 
             if (!response.ok) {
                 throw new Error('Error al registrar el usuario');
             }
+            alert('Registro exitoso');
+            document.location.href = '/login';
             // Redirigir a aulas
         } catch (error) {
             setError('Error al registrar el usuario');
