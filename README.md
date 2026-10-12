@@ -1,11 +1,33 @@
 # Tecnologías utilizadas
-React
-React DOM
-React Scripts
-Bootstrap
-CSS
-JavaScript / JSX
-Creación del proyecto
+	React (Biblioteca)
+		Es la herramienta principal para construir la interfaz de usuario mediante componentes reutilizables.
+
+	CRA Create React App
+		Proporciona una estructura base de React con las dependencias y herramientas de configuración necesarias para comenzar a desarrollar.
+
+	React DOM (Biblioteca)
+		Conecta React con el DOM del navegador, es decir, con los elementos que se muestran en la página web.
+
+	React Scripts (Herramientas de desarrollo)
+		Es el conjunto de herramientas que utiliza CRA (Create React App) para ejecutar, compilar y preparar el proyecto. ¿Por qué lo usamos? Para utilizar comandos como npm start y npm run build sin configurar manualmente todo el proceso.
+
+	Bootstrap (Framework CSS)
+		Ofrece estilos y componentes visuales prediseñados, como botones, formularios, tarjetas, grillas y modales.
+
+	JavaScript (Lenguaje de programación)
+		Es el lenguaje que implementa la lógica de la aplicación: funciones, validaciones, eventos, peticiones al backend y manejo de datos.
+
+	JSX (Extensión de sintaxis)
+		Permite escribir una estructura parecida a HTML dentro de JavaScript y combinarla con componentes y expresiones. JSX se transforma en código JavaScript que React puede utilizar.
+
+	CSS (Lenguaje de estilos)
+		Define la apariencia de los elementos: colores, tamaños, tipografías, márgenes, distribución y adaptación a distintas pantallas.
+
+	Lucide React (Biblioteca de iconos)
+		Proporciona iconos para utilizar directamente como componentes de React
+
+	React Router DOM (Biblioteca de navegación)
+		Permite relacionar URLs con componentes y navegar entre distintas pantallas de la aplicación.
 
 El proyecto fue creado utilizando Create React App (CRA).
 

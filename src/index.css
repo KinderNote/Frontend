@@ -1,13 +1,41 @@
-body {
+.body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Lexend',system-ui,sans-serif;
+  background-color: #F4F6F3;
+}
+p{
+  margin: 0;
+}
+h1{
+  margin: 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@font-face {
+  font-family: 'Lexend-Semibold';
+  src: url('./assets/font/Lexend/Lexend-SemiBold.ttf');
+}
+@font-face {
+  font-family: 'Lexend-Regular';
+  src: url('./assets/font/Lexend/Lexend-Regular.ttf');
+}
+@font-face {
+  font-family: 'Lexend-Medium';
+  src: url('./assets/font/Lexend/Lexend-Medium.ttf');
+}
+
+@font-face {
+  font-family: 'BricolageGrotesque-Bold';
+  src: url('./assets/font/BricolageGrotesque/BricolageGrotesque-Bold.ttf');
+}
+@font-face {
+  font-family: 'BricolageGrotesque-Semibold';
+  src: url('./assets/font/BricolageGrotesque/BricolageGrotesque-SemiBold.ttf');
+}
+@font-face {
+  font-family: 'BricolageGrotesque-Regular';
+  src: url('./assets/font/BricolageGrotesque/BricolageGrotesque-Regular.ttf');
+}
+@font-face {
+  font-family: 'BricolageGrotesque-Medium';
+  src: url('./assets/font/BricolageGrotesque/BricolageGrotesque-Medium.ttf');
 }
