@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import './Login.css';
 import Logo from '../../components/Logo/Logo';
+import { iniciarSesion as autenticar } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [contrasenia, setContrasenia] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
 
     async function iniciarSesion(event) {
         event.preventDefault();
@@ -14,28 +18,10 @@ function Login() {
         setLoading(true);
 
         try {
-            const respuesta = await fetch(
-                'http://localhost:3000/api/auth/login',{ //endpoint de backend
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    })
-                }
-            );
-
-            if (!respuesta.ok) {
-                setError('Email o contraseña incorrectos.');
-                return;
-            }
-            alert('Inicio de sesión exitoso');
-            // Redirigir a aulas
-
+            await autenticar({ email, contrasenia });
+            navigate('/aulas');
         } catch (error) {
-            setError('No se pudo conectar con el servidor. Intentá nuevamente.');
+            setError(error.message || 'No se pudo iniciar sesión.');
         } finally {
             setLoading(false);
         }
@@ -65,7 +51,7 @@ function Login() {
 
                     <div className="input">
                         <p className="input-label">Contraseña</p>
-                        <input id="password" className="input-field" type="password" placeholder="Contraseña" value={password} onChange={(event) => setPassword(event.target.value)} required/>
+                        <input id="password" className="input-field" type="password" placeholder="Contraseña" value={contrasenia} onChange={(event) => setContrasenia(event.target.value)} required/>
                     </div>
 
                     {error && (
@@ -74,7 +60,11 @@ function Login() {
                         </p>
                     )}
 
-                    <button className="login-button" type="submit" disabled={loading}>
+                    <button
+                        className="login-button"
+                        type="submit"
+                        disabled={loading}
+                    >
                         {loading ? 'Ingresando...' : 'Ingresar'}
                     </button>
 

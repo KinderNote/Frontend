@@ -1,56 +1,63 @@
 import { useState } from 'react';
 import { Circle, CheckCircle2, ChevronLeft} from 'lucide-react';
+import { registrarUsuario } from '../../services/authService';
 import './Register.css';
 import Logo from '../../components/Logo/Logo';
 
 function Register() {
     const [error, setError] = useState('');
-    const [name, setName] = useState('');
-    const [lastname, setLastname] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [apellido, setApellido] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [contrasenia, setContrasenia] = useState('');
+    const [registrando, setRegistrando] = useState(false);
+    const [registrado, setRegistrado] = useState(false);
     const requisitos = [
         {
             texto: 'Entre 8 y 32 caracteres',
             cumplido:
-                password.length >= 8 &&
-                password.length <= 32
+                contrasenia.length >= 8 &&
+                contrasenia.length <= 32
         },
         {
             texto: 'Al menos 1 mayúscula',
-            cumplido: /[A-Z]/.test(password)
+            cumplido: /[A-Z]/.test(contrasenia)
         },
         {
             texto: 'Al menos 1 minúscula',
-            cumplido: /[a-z]/.test(password)
+            cumplido: /[a-z]/.test(contrasenia)
         },
         {
             texto: '1 número o carácter especial',
-            cumplido: /[0-9]|[^A-Za-z0-9\s]/.test(password)
+            cumplido: /[0-9]|[^A-Za-z0-9\s]/.test(contrasenia)
         }
     ];
     const passwordValida = requisitos.every((requisito) => requisito.cumplido);
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     async function handleRegister(event) {
-            event.preventDefault();
-            setError('');
-        try {
-            const response = await fetch(
-                'http://localhost:3000/api/auth/register', { //endpoint de backend
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, lastname, email, password })
-                }
-            );
+        event.preventDefault();
+        setError('');
+        setRegistrado(false);
 
-            if (!response.ok) {
-                throw new Error('Error al registrar el usuario');
-            }
-            // Redirigir a aulas
+        if (!passwordValida) {
+            setError('La contraseña no cumple los requisitos.');
+            return;
+        }
+
+        try {
+            setRegistrando(true);
+            await registrarUsuario({
+                nombre,
+                apellido,
+                email,
+                contrasenia
+            });
+            setRegistrado(true);
         } catch (error) {
-            setError('Error al registrar el usuario');
+            setError(error.message || 'Error al registrar el usuario.');
+        } finally {
+            setRegistrando(false);
         }
     }
 
@@ -73,14 +80,14 @@ function Register() {
                                 <p>Nombre</p>
                                 <p className="input-required">*</p>
                             </div>
-                            <input className="input-field" type="text" placeholder="Nombre" value={name} onChange={(e) => setName(e.target.value)} required/>
+                            <input className="input-field" type="text" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required/>
                         </div>
                         <div className="input">
                             <div className="input-label">
                                 <p>Apellido</p>
                                 <p className="input-required">*</p>
                             </div>
-                            <input className="input-field" type="text" placeholder="Apellido" value={lastname} onChange={(e) => setLastname(e.target.value)} required/>
+                            <input className="input-field" type="text" placeholder="Apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} required/>
                         </div>
                     </div>
 
@@ -89,14 +96,23 @@ function Register() {
                             <p>Email</p>
                             <p className="input-required">*</p>
                         </div>
-                        <input className="input-field" type="email" placeholder="example@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required/>
+                        <input className="input-field" type="email" placeholder="example@email.com" value={email} onChange={(e) => setEmail(e.target.value)} pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" required/>
                     </div>
                     <div className="input">
                         <div className="input-label">
                             <p>Contraseña</p>
                             <p className="input-required">*</p>
                         </div>
-                        <input className="input-field" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required/>
+                        <input
+                            className="input-field"
+                            type="password"
+                            placeholder="Contraseña"
+                            value={contrasenia}
+                            onChange={(e) => setContrasenia(e.target.value)}
+                            minLength={8}
+                            maxLength={32}
+                            required
+                        />
                     </div>
                         
                     <div className="validation-password">
@@ -117,7 +133,19 @@ function Register() {
                         </p>
                     )}
 
-                    <button className="register-button" type="submit" disabled={!passwordValida}>Crear cuenta</button>
+                    {registrado && (
+                        <p role="status">
+                            ¡Registro exitoso!
+                        </p>
+                    )}
+
+                    <button
+                        className="register-button"
+                        type="submit"
+                        disabled={!passwordValida || registrando || !emailValido}
+                    >
+                        {registrando ? 'Creando cuenta...' : 'Crear cuenta'}
+                    </button>
                 </form>
 
                 <div className="login">
