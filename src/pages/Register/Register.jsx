@@ -71,7 +71,7 @@ function Register() {
                 </div>
             </div>
             <div className="register-container">
-                <button className="volver-button" ><a className="volver-button" href="/login"><ChevronLeft/>Volver</a></button>
+                <button className="volver-button" ><a className="volver-button" href="#/login"><ChevronLeft/>Volver</a></button>
                 <p className="register-title">Registrate</p>
                 <form className="register-form" onSubmit={handleRegister}>
                     <div className="nombre-apellido">
@@ -149,7 +149,7 @@ function Register() {
                 </form>
 
                 <div className="login">
-                        <p>¿Ya tenés cuenta? <a href="/login" className="login-link">Inicia sesión</a></p>
+                        <p>¿Ya tenés cuenta? <a href="#/login" className="login-link">Inicia sesión</a></p>
                     </div>
             </div>
         </div>
