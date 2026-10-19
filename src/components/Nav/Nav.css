@@ -7,7 +7,6 @@
 
 @media (max-width: 768px) {         /*MOBILE*/
     .nav-container{
-        margin-top: auto;
         font-family: 'Lexend-Regular',system-ui,sans-serif;
         height: 56px;
     }
@@ -17,11 +16,12 @@
         justify-content: space-around;
         background: #fff;
         border-top: 1px solid #DCE3E0;
-        padding: 8px 8px 22px;
+        padding: 8px 8px 0;
     }
     .navboton{
         width: 20%;
         max-width: 100px;
+        height: 44px;
         color: rgb(31, 42, 46);
         background: none;
         border: none;
