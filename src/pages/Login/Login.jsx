@@ -69,7 +69,7 @@ function Login() {
                     </button>
 
                     <div className="register">
-                        <p>¿No tenés cuenta? <a href="/register" className="register-link">Registrate</a></p>
+                        <p>¿No tenés cuenta? <a href="#/register" className="register-link">Registrate</a></p>
                     </div>
                 </div>
             </form>
