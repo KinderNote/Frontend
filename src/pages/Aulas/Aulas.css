@@ -1,0 +1,16 @@
+.aulas-container{
+    height: 100vh;
+    margin: auto;
+}
+.hola{
+    height: 90%;
+    width: auto;
+    margin: auto;
+}
+@media (min-width: 768px) {         /*DESKTOP*/
+    .aulas-container{
+        display: flex;
+        flex-direction: row-reverse;
+    }
+
+}

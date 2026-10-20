@@ -1,0 +1,98 @@
+.nav-mobile{
+    display: none;
+}
+.nav-desktop{
+    display: none;
+}
+
+@media (max-width: 768px) {         /*MOBILE*/
+    .nav-container{
+        margin-top: auto;
+        font-family: 'Lexend-Regular',system-ui,sans-serif;
+        height: 56px;
+    }
+    .nav-mobile{
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        background: #fff;
+        border-top: 1px solid #DCE3E0;
+        padding: 8px 8px 22px;
+    }
+    .navboton{
+        width: 20%;
+        max-width: 100px;
+        color: rgb(31, 42, 46);
+        background: none;
+        border: none;
+        text-decoration: none;
+        font-size: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }    
+    .navboton:hover,
+    .navboton.activo{
+        color: #2F6B5E;
+    }
+}
+
+@media (min-width: 768px) {         /*DESKTOP*/
+    .nav-container{
+        height: 100vh;
+        width: 232px;
+        font-family: 'Lexend-Regular',system-ui,sans-serif;
+    }
+    .nav-desktop{
+        min-height: min-content;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 24px 16px;
+        box-sizing: border-box;
+        background: #1F3B36;
+        height: 100%;
+    }
+    .logo{
+        padding-left: 12px;
+    }
+    .navegation-desktop{
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .navboton{
+        display: block;
+        padding: 12px;
+        border-radius: 10px;
+        color: #C9D8D3;
+        background: none;
+        border: none;
+        text-decoration: none;
+        font-size: 15px;
+        text-align: left;
+    }
+    .navboton:hover,
+    .navboton.activo{
+        background: #2F5A52;
+    }
+    .nav-sesion{
+        margin-top: auto;
+        font-size: 13px;
+        color: #A9C0B9;
+        padding: 12px;
+        border-top: 1px solid #2F5A52;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .button-sesion{
+        margin-top: auto;
+        background: none;
+        border: none;
+        text-decoration: none;
+        text-align: left;
+        padding: 0;
+        color:#F2B544;
+    }
+}
