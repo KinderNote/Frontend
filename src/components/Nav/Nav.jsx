@@ -25,18 +25,18 @@ function Nav() {
             <div className='nav-mobile'>
 
                     <button
-                        className={`navboton ${seleccionado === '/class' ? 'activo' : ''}`}
-                        onClick={() => navegarA('/class')}
+                        className={`navboton ${seleccionado === '/clases' ? 'activo' : ''}`}
+                        onClick={() => navegarA('/clases')}
                     ><House size={20}/>Aulas</button>
 
                     <button 
-                        className={`navboton ${seleccionado === '/tags' ? 'activo' : ''}`}
-                        onClick={() => navegarA('/tags')}
+                        className={`navboton ${seleccionado === '/etiquetas' ? 'activo' : ''}`}
+                        onClick={() => navegarA('/etiquetas')}
                     ><Tag size={20}/>Etiquetas</button>
 
                     <button 
-                        className={`navboton ${seleccionado === '/draft' ? 'activo' : ''}`}
-                        onClick={() => navegarA('/draft')}
+                        className={`navboton ${seleccionado === '/borradores' ? 'activo' : ''}`}
+                        onClick={() => navegarA('/borradores')}
                     ><FileText size={20}/>Informes</button>
 
             </div>
@@ -46,18 +46,18 @@ function Nav() {
                 <div className='navegation-desktop'>
 
                     <button
-                        className={`navboton ${seleccionado === '/class' ? 'activo' : ''}`}
-                        onClick={() => navegarA('/class')}
+                        className={`navboton ${seleccionado === '/clases' ? 'activo' : ''}`}
+                        onClick={() => navegarA('/clases')}
                     >Mis aulas</button>
 
                     <button 
-                        className={`navboton ${seleccionado === '/tags' ? 'activo' : ''}`}
-                        onClick={() => navegarA('/tags')}
+                        className={`navboton ${seleccionado === '/etiquetas' ? 'activo' : ''}`}
+                        onClick={() => navegarA('/etiquetas')}
                     >Etiquetas</button>
 
                     <button 
-                        className={`navboton ${seleccionado === '/draft' ? 'activo' : ''}`}
-                        onClick={() => navegarA('/draft')}
+                        className={`navboton ${seleccionado === '/borradores' ? 'activo' : ''}`}
+                        onClick={() => navegarA('/borradores')}
                     >Informes</button>
                 </div>
 

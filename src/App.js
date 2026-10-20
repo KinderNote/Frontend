@@ -13,9 +13,9 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} /> 
         <Route path="/login" element={<Login />} /> 
         <Route path="/register" element={<Register />} />
-        <Route path="/class" element={<Aulas />} />
-        <Route path="/tags" element={<Etiquetas />} />  
-        <Route path="/draft" element={<Borrador />} /> 
+        <Route path="/clases" element={<Aulas />} />
+        <Route path="/etiquetas" element={<Etiquetas />} />  
+        <Route path="/borradores" element={<Borrador />} /> 
         <Route path="*" element={<Navigate to="/login" replace />} /> 
       </Routes> 
     </BrowserRouter>
