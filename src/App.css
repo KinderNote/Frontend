@@ -36,3 +36,32 @@
     transform: rotate(360deg);
   }
 }
+/* Comportamiento por defecto para Mobile (Bottom Sheet inferior) */
+.panel-lateral-custom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: 85vh;
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+  z-index: 1060;
+  overflow-y: auto;
+}
+
+/* Comportamiento para PC / Tablets grandes (Panel lateral derecho de arriba a abajo) */
+@media (min-width: 768px) {
+  .panel-lateral-custom {
+    top: 0;
+    bottom: 0;
+    left: auto;
+    right: 0;
+    width: 380px;
+    height: 100%;
+    max-height: 100vh;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-left: 1px solid #dee2e6;
+  }
+}
