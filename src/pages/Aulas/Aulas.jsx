@@ -1,17 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './Aulas.css';
 import Nav from '../../components/Nav/Nav';
+import { getAulasPorMaestra, crearAula, editarAula as editarAulaApi, eliminarAula } from '../../services/aulaService';
 
 function Aulas() {
-  const [aulas, setAulas] = useState([
-    { id: 1, nombre: "Sala de 3 • Patitos", alumnos: 18, ultima: "hoy" },
-    { id: 2, nombre: "Sala de 4 • Jirafas", alumnos: 22, ultima: "ayer" },
-    { id: 3, nombre: "Sala de 5 • Delfines", alumnos: 20, ultima: "hace 3 días" }
-  ]);
+  const usuario = JSON.parse(localStorage.getItem('usuario'));
+  const usuarioId = usuario?.id;
+
+  const [aulas, setAulas] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState('');
 
   const [mostrarPanel, setMostrarPanel] = useState(false);
   const [nombreAula, setNombreAula] = useState("");
   const [idEditando, setIdEditando] = useState(null);
+
+  const cargarAulas = useCallback(async () => {
+    try {
+      if (!usuarioId) {
+        throw new Error('No se encontró la maestra de la sesión.');
+      }
+      setAulas(await getAulasPorMaestra(usuarioId));
+      setError('');
+    } catch (e) {
+      console.error('Error al cargar aulas:', e);
+      setError(e.message);
+    } finally {
+      setCargando(false);
+    }
+  }, [usuarioId]);
+
+  useEffect(() => {
+    cargarAulas();
+  }, [cargarAulas]);
 
   const abrirPanelCrear = () => {
     setNombreAula("");
@@ -25,30 +46,33 @@ function Aulas() {
     setMostrarPanel(true);
   };
 
-  const guardarAula = (e) => {
+  const guardarAula = async (e) => {
     e.preventDefault();
     if (!nombreAula.trim()) return;
 
-    if (idEditando !== null) {
-      setAulas(aulas.map(a => a.id === idEditando ? { ...a, nombre: nombreAula } : a));
-    } else {
-      const nueva = {
-        id: Date.now(),
-        nombre: nombreAula,
-        alumnos: 0,
-        ultima: "ninguna"
-      };
-      setAulas([...aulas, nueva]);
+    try {
+      if (idEditando !== null) {
+        await editarAulaApi(idEditando, nombreAula.trim());
+      } else {
+        await crearAula(nombreAula.trim(), usuarioId);
+      }
+      await cargarAulas();
+      setMostrarPanel(false);
+      setNombreAula("");
+      setIdEditando(null);
+    } catch (e) {
+      setError(e.message);
     }
-
-    setMostrarPanel(false);
-    setNombreAula("");
-    setIdEditando(null);
   };
 
-  const eliminarAula = (id, nombre) => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar "${nombre}"?`)) {
-      setAulas(aulas.filter(a => a.id !== id));
+  const eliminarAulaPorId = async (id, nombre) => {
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar "${nombre}"? También se eliminarán sus alumnos.`)) return;
+
+    try {
+      await eliminarAula(id);
+      await cargarAulas();
+    } catch (e) {
+      setError(e.message);
     }
   };
 
@@ -70,6 +94,12 @@ function Aulas() {
             </button>
           </div>
 
+          {error && <div className="alert alert-danger py-2 small">{error}</div>}
+          {cargando && <p className="text-muted small">Cargando aulas...</p>}
+          {!cargando && !error && aulas.length === 0 && (
+            <p className="text-muted small">Todavía no tenés aulas. Creá la primera.</p>
+          )}
+
           {/* LISTADO DE TARJETAS */}
           <div className="row g-3">
             {aulas.map((aula) => (
@@ -77,9 +107,6 @@ function Aulas() {
                 <div className="card border border-secondary border-opacity-25 shadow-sm rounded-4 p-3 bg-white">
                   <div className="card-body p-1">
                     <h5 className="card-title fw-bold text-dark mb-1">{aula.nombre}</h5>
-                    <p className="card-text text-muted small mb-3">
-                      {aula.alumnos} alumnos · última anotación {aula.ultima}
-                    </p>
                     
                     <hr className="my-2 opacity-10" />
 
@@ -93,7 +120,7 @@ function Aulas() {
                       </button>
                       <button 
                         className="btn btn-link p-0 text-danger text-decoration-none fw-bold small"
-                        onClick={() => eliminarAula(aula.id, aula.nombre)}
+                        onClick={() => eliminarAulaPorId(aula.id, aula.nombre)}
                       >
                         Eliminar
                       </button>
@@ -103,10 +130,6 @@ function Aulas() {
               </div>
             ))}
           </div>
-
-          <p className="text-muted small mt-4 d-none d-md-block">
-            Datos de ejemplo. Al eliminar un aula se pide confirmación en la misma pantalla.
-          </p>
 
         </div>
       </div>
