@@ -1,16 +1,14 @@
 .aulas-container{
-    height: 100vh;
-    margin: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
-.hola{
-    height: 90%;
-    width: auto;
-    margin: auto;
+.aulas-contenido{
+    flex: 1;
+    min-width: 0;
 }
 @media (min-width: 768px) {         /*DESKTOP*/
     .aulas-container{
-        display: flex;
         flex-direction: row-reverse;
     }
-
 }

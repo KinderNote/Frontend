@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import './Aulas.css';
+import Nav from '../../components/Nav/Nav';
 
 function Aulas() {
   const [aulas, setAulas] = useState([
@@ -51,45 +53,11 @@ function Aulas() {
   };
 
   return (
-    <div className="container-fluid p-0 min-vh-100 d-flex flex-column" style={{ backgroundColor: '#eef1ee' }}>
-      
-      {/* 1. HEADER MOBILE */}
-      <header className="d-md-none p-3 d-flex justify-content-between align-items-center" style={{ backgroundColor: '#1b3b33' }}>
-        <h4 className="fw-bold m-0" style={{ fontSize: '1.4rem' }}>
-          <span className="text-white">Kinder</span>
-          <span style={{ color: '#f39c12' }}>Note</span>
-        </h4>
-        <a href="#salir" className="text-warning text-decoration-none small fw-semibold">Salir</a>
-      </header>
+    <div className="aulas-container" style={{ backgroundColor: '#eef1ee' }}>
 
-      <div className="row g-0 flex-grow-1">
-        
-        {/* 2. BARRA LATERAL PC */}
-        <div className="col-md-3 col-lg-2 text-white p-4 d-none d-md-flex flex-column justify-content-between" style={{ backgroundColor: '#1b3b33', minHeight: '100vh' }}>
-          <div>
-            <h4 className="fw-bold mb-4">
-              <span className="text-white">Kinder</span>
-              <span style={{ color: '#f39c12' }}>Note</span>
-            </h4>
-            <ul className="nav flex-column gap-2">
-              <li className="nav-item">
-                <a href="#aulas" className="nav-link text-white rounded px-3 py-2" style={{ backgroundColor: '#142e27' }}>
-                  Mis aulas
-                </a>
-              </li>
-              <li className="nav-item"><a href="#etiquetas" className="nav-link text-white-50">Etiquetas</a></li>
-              <li className="nav-item"><a href="#informes" className="nav-link text-white-50">Informes</a></li>
-            </ul>
-          </div>
-          <div className="small text-white-50">
-            <p className="mb-1">Laura Gómez</p>
-            <a href="#salir" className="text-warning text-decoration-none">Cerrar sesión</a>
-          </div>
-        </div>
+      <div className="aulas-contenido">
+        <div className="p-3 p-md-5 pb-5">
 
-        {/* 3. CONTENIDO PRINCIPAL */}
-        <div className="col-12 col-md-9 col-lg-10 p-3 p-md-5 pb-5">
-          
           <h2 className="fw-bold text-dark mb-3 fs-3 fs-md-2">Mis aulas</h2>
 
           <div className="d-grid d-sm-block mb-4">
@@ -141,21 +109,9 @@ function Aulas() {
           </p>
 
         </div>
-
       </div>
 
-      {/* 4. BARRA DE NAVEGACIÓN INFERIOR MOBILE */}
-      <nav className="d-md-none fixed-bottom bg-white border-top d-flex justify-content-around py-2 shadow-lg">
-        <a href="#aulas" className="text-center text-decoration-none text-dark fw-bold small">
-          <div>Mis aulas</div>
-        </a>
-        <a href="#etiquetas" className="text-center text-decoration-none text-muted small">
-          <div>Etiquetas</div>
-        </a>
-        <a href="#informes" className="text-center text-decoration-none text-muted small">
-          <div>Informes</div>
-        </a>
-      </nav>
+      <Nav />
 
       {/* 5. PANELES CONDICIONALES (SEPARADOS PARA EVITAR CONFLICTOS) */}
       {mostrarPanel && (
