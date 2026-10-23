@@ -12,6 +12,7 @@ import {
 
 function Borrador() {
     const usuario = JSON.parse(localStorage.getItem('usuario'));
+    const usuarioId = usuario?.id;
 
     const [borradores, setBorradores] = useState([]);
     const [cargando, setCargando] = useState(true);
@@ -54,7 +55,7 @@ function Borrador() {
                     throw new Error('No se encontró la maestra de la sesión.');
                 }
 
-                const datos = await getBorradoresPorMaestra(usuario.id);
+                const datos = await getBorradoresPorMaestra(usuarioId);
                 //console.log('Borradores recibidos:', datos);
                 //console.log('Primer borrador:', datos[0]);
                 setBorradores(datos);
@@ -66,7 +67,7 @@ function Borrador() {
             }
         }
         cargarBorradores();
-    }, []);
+    }, [usuarioId]);
 
     async function solicitarBorrador() {
         if (!aulaSeleccion || !alumnoSeleccion || !fechaDesde || !fechaHasta) {
