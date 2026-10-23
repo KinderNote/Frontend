@@ -50,10 +50,6 @@ function Borrador() {
     useEffect(() => {
         async function cargarBorradores() {
             try {
-                const usuario = JSON.parse(
-                    localStorage.getItem('usuario')
-                );
-
                 if (!usuario?.id) {
                     throw new Error('No se encontró la maestra de la sesión.');
                 }
@@ -243,6 +239,11 @@ function Borrador() {
                                 </button>
                             );
                         })}
+                        {cargando && <p>Cargando borradores...</p>}
+                        {!cargando && error && <p>{error}</p>}
+                        {!cargando && !error && borradores.length === 0 && (
+                        <p>No hay borradores guardados.</p>
+                        )}
                     </div>
                 </div>
                 <Nav/>
