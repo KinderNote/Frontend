@@ -12,7 +12,6 @@ import {
 
 function Borrador() {
     const usuario = JSON.parse(localStorage.getItem('usuario'));
-    console.log('Usuario de la sesión:', usuario);
 
     const [borradores, setBorradores] = useState([]);
     const [cargando, setCargando] = useState(true);
@@ -38,9 +37,6 @@ function Borrador() {
                     getAulas()
                 ]);
 
-                console.log('Alumnos recibidos:', datosAlumnos);
-                console.log('Aulas recibidas:', datosAulas);
-
                 setAlumno(datosAlumnos);
                 setAulas(datosAulas);
             } catch (error) {
@@ -63,8 +59,8 @@ function Borrador() {
                 }
 
                 const datos = await getBorradoresPorMaestra(usuario.id);
-                console.log('Borradores recibidos:', datos);
-                console.log('Primer borrador:', datos[0]);
+                //console.log('Borradores recibidos:', datos);
+                //console.log('Primer borrador:', datos[0]);
                 setBorradores(datos);
             } catch (error) {
                 console.error(error);
@@ -106,7 +102,7 @@ function Borrador() {
                 fechaInicio: formatearFecha(fechaDesde),
                 fechaFin: formatearFecha(fechaHasta)
             };
-            console.log('Datos enviados al backend:', datos);
+            //console.log('Datos enviados al backend:', datos);
             const resultado = await generarBorrador(datos);
 
             const nuevoBorrador = {

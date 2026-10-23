@@ -33,7 +33,6 @@ export async function getBorradores() {
     }
 
     const informes = await respuesta.json();
-    console.log('Informes recibidos:', informes);
     return informes.filter(informe => informe.esBorrador === true);
 }
 
