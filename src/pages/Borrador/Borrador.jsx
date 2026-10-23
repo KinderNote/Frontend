@@ -12,6 +12,7 @@ import {
 
 function Borrador() {
     const usuario = JSON.parse(localStorage.getItem('usuario'));
+    const usuarioId = usuario?.id;
 
     const [borradores, setBorradores] = useState([]);
     const [cargando, setCargando] = useState(true);
@@ -50,15 +51,11 @@ function Borrador() {
     useEffect(() => {
         async function cargarBorradores() {
             try {
-                const usuario = JSON.parse(
-                    localStorage.getItem('usuario')
-                );
-
-                if (!usuario?.id) {
+                if (!usuarioId) {
                     throw new Error('No se encontró la maestra de la sesión.');
                 }
 
-                const datos = await getBorradoresPorMaestra(usuario.id);
+                const datos = await getBorradoresPorMaestra(usuarioId);
                 //console.log('Borradores recibidos:', datos);
                 //console.log('Primer borrador:', datos[0]);
                 setBorradores(datos);
@@ -70,7 +67,7 @@ function Borrador() {
             }
         }
         cargarBorradores();
-    }, []);
+    }, [usuarioId]);
 
     async function solicitarBorrador() {
         if (!aulaSeleccion || !alumnoSeleccion || !fechaDesde || !fechaHasta) {
@@ -243,6 +240,11 @@ function Borrador() {
                                 </button>
                             );
                         })}
+                        {cargando && <p>Cargando borradores...</p>}
+                        {!cargando && error && <p>{error}</p>}
+                        {!cargando && !error && borradores.length === 0 && (
+                        <p>No hay borradores guardados.</p>
+                        )}
                     </div>
                 </div>
                 <Nav/>
