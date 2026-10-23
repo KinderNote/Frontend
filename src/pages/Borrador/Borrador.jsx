@@ -51,7 +51,7 @@ function Borrador() {
     useEffect(() => {
         async function cargarBorradores() {
             try {
-                if (!usuario?.id) {
+                if (!usuarioId) {
                     throw new Error('No se encontró la maestra de la sesión.');
                 }
 
