@@ -18,8 +18,9 @@ function Login() {
         setLoading(true);
 
         try {
-            await autenticar({ email, contrasenia });
-            navigate('/aulas');
+            const usuario = await autenticar({ email, contrasenia });
+            localStorage.setItem('usuario', JSON.stringify(usuario));
+            navigate('/clases');
         } catch (error) {
             setError(error.message || 'No se pudo iniciar sesión.');
         } finally {

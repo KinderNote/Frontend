@@ -2,21 +2,72 @@ import { useEffect, useState } from 'react';
 import './Borrador.css';
 import { ChevronLeft} from 'lucide-react';
 import Nav from '../../components/Nav/Nav';
-import {getBorradores , guardarBorrador} from '../../services/informeService';
+import {
+    getAlumnos,
+    getAulas,
+    getBorradoresPorMaestra,
+    generarBorrador,
+    guardarBorrador
+} from '../../services/informeService';
 
 function Borrador() {
+    const usuario = JSON.parse(localStorage.getItem('usuario'));
+    console.log('Usuario de la sesión:', usuario);
+
     const [borradores, setBorradores] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState('');
-    const aulas = [];
-    const alumno = [];
+    const [aulas, setAulas] = useState([]);
+    const [alumno, setAlumno] = useState([]);
+
+    const [aulaSeleccion, setAulaSeleccion] = useState('');
+    const [alumnoSeleccion, setAlumnoSeleccion] = useState('');
+
+    const [fechaDesde, setFechaDesde] = useState('');
+    const [fechaHasta, setFechaHasta] = useState('');
+
+    const [borradorActual, setBorradorActual] = useState(null)
+    
+    const [abierto, setAbierto] = useState(false);
+
+    useEffect(() => {
+        async function cargarDatos() {
+            try {
+                const [datosAlumnos, datosAulas] = await Promise.all([
+                    getAlumnos(),
+                    getAulas()
+                ]);
+
+                console.log('Alumnos recibidos:', datosAlumnos);
+                console.log('Aulas recibidas:', datosAulas);
+
+                setAlumno(datosAlumnos);
+                setAulas(datosAulas);
+            } catch (error) {
+                console.error('Error al cargar alumnos y aulas:', error);
+                setError(error.message);
+            }
+        }
+        cargarDatos();
+    }, []);
 
     useEffect(() => {
         async function cargarBorradores() {
             try {
-                const datos = await getBorradores();
+                const usuario = JSON.parse(
+                    localStorage.getItem('usuario')
+                );
+
+                if (!usuario?.id) {
+                    throw new Error('No se encontró la maestra de la sesión.');
+                }
+
+                const datos = await getBorradoresPorMaestra(usuario.id);
+                console.log('Borradores recibidos:', datos);
+                console.log('Primer borrador:', datos[0]);
                 setBorradores(datos);
             } catch (error) {
+                console.error(error);
                 setError(error.message);
             } finally {
                 setCargando(false);
@@ -25,8 +76,7 @@ function Borrador() {
         cargarBorradores();
     }, []);
 
-
-    function generarBorrador() {
+    async function solicitarBorrador() {
         if (!aulaSeleccion || !alumnoSeleccion || !fechaDesde || !fechaHasta) {
             alert('Completá todos los campos para generar el borrador.');
             return;
@@ -45,21 +95,42 @@ function Borrador() {
             (a) => String(a.id) === String(aulaSeleccion)
         );
 
-        //enviar los datos a la API para generar el borrador
+        if (!alumnoActual || !aulaActual) {
+            alert('No se encontró el alumno o el aula seleccionados.');
+            return;
+        }
 
-        const nuevoBorrador = {
-            id: Date.now(),
-            nombre: alumnoActual.nombre,
-            apellido: alumnoActual.apellido || '',
-            aula: aulaActual.nombre,
-            fechaDesde,
-            fechaHasta,
-            fechaGeneracion: new Date().toLocaleDateString('es-AR'),
-            contenido: 'El contenido generado aparecerá aquí.'
-        };
+        try {
+            const datos = {
+                alumnoId: Number(alumnoSeleccion),
+                fechaInicio: formatearFecha(fechaDesde),
+                fechaFin: formatearFecha(fechaHasta)
+            };
+            console.log('Datos enviados al backend:', datos);
+            const resultado = await generarBorrador(datos);
 
-        setBorradorActual(nuevoBorrador);
-        setAbierto(true);
+            const nuevoBorrador = {
+                nombre: alumnoActual.nombre,
+                apellido: alumnoActual.apellido || '',
+                aula: aulaActual.nombre,
+                fechaDesde,
+                fechaHasta,
+                fechaGeneracion: new Date().toLocaleDateString('es-AR'),
+                contenido: resultado
+            };
+            
+            setBorradorActual(nuevoBorrador);
+            setAbierto(true);
+
+        } catch (error) {
+            console.error(error);
+            alert(error.message);
+        }
+    }
+
+    function formatearFecha(fecha) {
+        const [anio, mes, dia] = fecha.split('-');
+        return `${dia}-${mes}-${anio}`;
     }
 
     async function guardarBorradorActual() {
@@ -69,47 +140,28 @@ function Borrador() {
         }
 
         try {
-            await guardarBorrador(borradorActual);
+            const informe = {
+                texto: borradorActual.contenido,
+                fechaCreacion: formatearFecha(
+                    new Date().toLocaleDateString('en-CA')
+                ),
+                esBorrador: true,
+                alumno: {
+                    id: Number(alumnoSeleccion)
+                }
+            };
+
+            await guardarBorrador(informe);
+
             alert('Borrador guardado correctamente.');
+
+            const informesActualizados = await getBorradoresPorMaestra();
+            setBorradores(informesActualizados);
         } catch (error) {
             console.error(error);
             alert('No se pudo guardar el borrador.');
         }
     }
-
-    const [aulaSeleccion, setAulaSeleccion] = useState('');
-    const [alumnoSeleccion, setAlumnoSeleccion] = useState('');
-
-    const [fechaDesde, setFechaDesde] = useState('');
-    const [fechaHasta, setFechaHasta] = useState('');
-
-    const [borradorActual, setBorradorActual] = useState(null)
-    
-    const [abierto, setAbierto] = useState(false);
-
-    /* DATOS DE PRUEBA
-    const aulas = [
-        { id: 1, nombre: 'Sala Roja' },
-        { id: 2, nombre: 'Sala Azul' },
-        { id: 3, nombre: 'Sala Verde' }
-    ];
-    const alumno = [
-        { id: 1, nombre: 'nombre' },
-        { id: 2, nombre: 'nombre2' },
-        { id: 3, nombre: 'nombreyapellido?' }
-    ];
-    const borradores = [
-        { nombre: 'Nombre', apellido:'apellido', fechaGeneracion:'10/10/10', contenido:'El contenido generado aparecerá aquí.' },
-        { nombre: 'Nombre2', apellido:'apellido', fechaGeneracion:'10/10/10' },
-        { nombre: 'Nombreyapellido?', apellido:'apellido', fechaGeneracion:'10/20/10' },
-        { nombre: 'Nombre', apellido:'apellido', fechaGeneracion:'10/10/10' },
-        { nombre: 'Nombre2', apellido:'apellido', fechaGeneracion:'10/10/10' },
-        { nombre: 'Nombreyapellido?', apellido:'apellido', fechaGeneracion:'10/20/10' },
-        { nombre: 'Nombre', apellido:'apellido', fechaGeneracion:'10/10/10' },
-        { nombre: 'Nombre2', apellido:'apellido', fechaGeneracion:'10/10/10' },
-        { nombre: 'Nombreyapellido?', apellido:'apellido', fechaGeneracion:'10/20/10' }
-    ];
-    */
 
     return(
         <div className='borrador'>
@@ -156,32 +208,45 @@ function Borrador() {
                                 />
                             </div>
                         </div>
-                        <button className='boton-generar' type="button" onClick={generarBorrador}>Generar borrador</button>
+                        <button className='boton-generar' type="button" onClick={solicitarBorrador}>Generar borrador</button>
                     </form>
                     
                     <div className='guardados-container'>
                         <p className='title-guardados'>BORRADORES GUARDADOS</p>
-                        {borradores.map((borrador, index) => (
-                            <button
-                                className={`borrador-info ${
-                                    borradorActual === borrador ? 'seleccionado' : ''
-                                }`}
-                                type="button"
-                                key={index}
-                                onClick={() => {
-                                    setBorradorActual(borrador);
-                                    setAbierto(true);
-                                }}
-                            >
-                                <span className="info-nombre">
-                                    {borrador.nombre} {borrador.apellido}
-                                </span>
+                        {borradores.map((borrador) => {
+                            const alumnoBorrador = alumno.find(
+                                (a) => String(a.id) === String(borrador.alumno?.id)
+                            );
 
-                                <span className="info-fecha">
-                                    {borrador.fechaGeneracion}
-                                </span>
-                            </button>
-                        ))}
+                            return (
+                                <button
+                                    className="borrador-info"
+                                    key={borrador.id}
+                                    type="button"
+                                    onClick={() => {
+                                        setBorradorActual({
+                                            ...borrador,
+                                            nombre: alumnoBorrador?.nombre || 'Alumno no encontrado',
+                                            apellido: alumnoBorrador?.apellido || '',
+                                            contenido: borrador.texto,
+                                            fechaGeneracion: borrador.fechaCreacion
+                                        });
+
+                                        setAbierto(true);
+                                    }}
+                                >
+                                    <span className="info-nombre">
+                                        {alumnoBorrador
+                                            ? `${alumnoBorrador.nombre} ${alumnoBorrador.apellido || ''}`
+                                            : 'Alumno no encontrado'}
+                                    </span>
+
+                                    <span className="info-fecha">
+                                        {borrador.fechaCreacion}
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
                 <Nav/>
