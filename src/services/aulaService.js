@@ -1,5 +1,5 @@
-//const API_URL = 'https://kindernote-backend.onrender.com/kindernote/api/aula';
-const API_URL = 'http://localhost:8080/kindernote/api/aula';
+const API_URL = 'https://kindernote-backend.onrender.com/kindernote/api/aula';
+//const API_URL = 'http://localhost:8080/kindernote/api/aula';
 
 export async function getAulasPorMaestra(maestraId) {
     const respuesta = await fetch(`${API_URL}/maestraId/?maestraId=${maestraId}`);
