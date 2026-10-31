@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './Aulas.css';
 import Nav from '../../components/Nav/Nav';
 import { getAulasPorMaestra, crearAula, editarAula as editarAulaApi, eliminarAula } from '../../services/aulaService';
+import Observaciones from '../../components/Observaciones/Observaciones';
 
 function Aulas() {
   const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -79,6 +80,8 @@ function Aulas() {
   return (
     <div className="aulas-container" style={{ backgroundColor: '#eef1ee' }}>
 
+
+      {/* saco pa probar 
       <div className="aulas-contenido">
         <div className="p-3 p-md-5 pb-5">
 
@@ -100,7 +103,6 @@ function Aulas() {
             <p className="text-muted small">Todavía no tenés aulas. Creá la primera.</p>
           )}
 
-          {/* LISTADO DE TARJETAS */}
           <div className="row g-3">
             {aulas.map((aula) => (
               <div className="col-12 col-md-6 col-lg-4" key={aula.id}>
@@ -133,7 +135,8 @@ function Aulas() {
 
         </div>
       </div>
-
+      */}
+      <Observaciones />
       <Nav />
 
       {/* 5. PANELES CONDICIONALES (SEPARADOS PARA EVITAR CONFLICTOS) */}
