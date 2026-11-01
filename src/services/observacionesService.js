@@ -19,48 +19,76 @@ export async function getEtiquetas() {
     return etiquetasPrueba;
 }
 
-const observacionesPrueba = [
+let observacionesPrueba = [
     {
         id: 1,
-        fecha: '2026/10/28',
-        nota: 'Participó activamente en la actividad de lectura. Reconoció nuevas palabras y compartió sus ideas con el grupo.',
         alumnoId: 1,
+        fecha: '2026-10-28',
+        nota: 'Participó activamente en la actividad de lectura.',
+        etiquetaId: 1,
         etiqueta: 'Lenguaje'
     },
     {
         id: 2,
-        fecha: '2026/10/26',
-        nota: 'Compartió los materiales con sus compañeros durante la actividad grupal.',
-        alumnoId: 2,
+        alumnoId: 1,
+        fecha: '2026-10-26',
+        nota: 'Compartió los materiales con sus compañeros.',
+        etiquetaId: 2,
         etiqueta: 'Socialización'
     },
     {
         id: 3,
-        fecha: '2026/10/24',
-        nota: 'Logró realizar la actividad de encastre sin ayuda de la docente.',
-        alumnoId: 3,
-        etiqueta: 'Motricidad'
-    },
-    {
-        id: 4,
-        fecha: '2026/10/22',
-        nota: 'Mostró interés por contar experiencias personales durante la ronda.',
         alumnoId: 1,
-        etiqueta: 'Lenguaje'
-    },
-    {
-        id: 5,
-        fecha: '2026/10/20',
-        nota: 'Comenzó a organizar sus pertenencias de manera autónoma.',
-        alumnoId: 4,
-        etiqueta: 'Autonomía'
+        fecha: '2026-10-24',
+        nota: 'Logró realizar la actividad de encastre sin ayuda.',
+        etiquetaId: 3,
+        etiqueta: 'Motricidad'
     }
 ];
 
+
 export async function getObservacionesPorAlumno(alumnoId) {
+    await new Promise(resolve => setTimeout(resolve, 300));
 
-    // Simulamos una pequeña demora del servidor.
-    await new Promise(resolve => setTimeout(resolve, 500));
+    return observacionesPrueba.filter(
+        observacion => observacion.alumnoId === Number(alumnoId)
+    );
+}
 
-    return observacionesPrueba;
+// Guardar una observación nueva
+export async function guardarObservacion(datos) {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const nuevaObservacion = {
+        id: Date.now(),
+        ...datos
+    };
+
+    observacionesPrueba.push(nuevaObservacion);
+
+    return nuevaObservacion;
+}
+
+// Modificar una observación existente
+export async function editarObservacion(id, datos) {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    observacionesPrueba = observacionesPrueba.map(observacion =>
+        observacion.id === id
+            ? { ...observacion, ...datos }
+            : observacion
+    );
+
+    return observacionesPrueba.find(observacion => observacion.id === id);
+}
+
+// Eliminar una observación
+export async function eliminarObservacion(id) {
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    observacionesPrueba = observacionesPrueba.filter(
+        observacion => observacion.id !== id
+    );
+
+    return true;
 }

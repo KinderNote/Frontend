@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight} from 'lucide-react';
 import './Observaciones.css';
 import { getEtiquetas, getObservacionesPorAlumno} from '../../services/observacionesService';
+import {
+    guardarObservacion,
+    editarObservacion,
+    eliminarObservacion
+} from '../../services/observacionesService';
 
 function Observaciones() {
     const [alumnoId, setAlumnoId] = useState('');
@@ -16,8 +22,12 @@ function Observaciones() {
     const [cargandoObservaciones, setCargandoObservaciones] = useState(true);
     const [errorObservaciones, setErrorObservaciones] = useState('');
 
-    useEffect(() => {
+    const [edicionAbierta, setEdicionAbierta] = useState(false);
+    const [observacionEditando, setObservacionEditando] = useState(null);
+    const [guardando, setGuardando] = useState(false);
 
+    //OBSERVACIONES
+    useEffect(() => {
         async function cargarObservaciones() {
             try {
                 setCargandoObservaciones(true);
@@ -31,10 +41,10 @@ function Observaciones() {
                 setCargandoObservaciones(false);
             }
         }
-
         cargarObservaciones();
     }, [alumnoId]);
 
+    //ETIQUETAS
     useEffect(() => {
         async function cargarEtiquetas() {
             try {
@@ -54,10 +64,106 @@ function Observaciones() {
 
         return observacion.alumnoId === etiquetaFiltro;
     });
+
+    function nuevaObservacion() {
+        setNota('');
+        setFecha(new Date().toLocaleDateString('en-CA'));
+        setEtiquetaSeleccionada('');
+
+        setObservacionEditando(null);
+        setEdicionAbierta(true);
+    }
+
+    function editarObservacion(observacion) {
+        setNota(observacion.nota);
+        setFecha(observacion.fecha);
+        setEtiquetaSeleccionada(observacion.etiquetaId);
+
+        setObservacionEditando(observacion);
+        setEdicionAbierta(true);
+    }
+
+    function cerrarEdicion() {
+        setEdicionAbierta(false);
+        setObservacionEditando(null);
+    }
+
+    async function handleGuardar() {
+        if (!nota.trim() || !fecha || !etiquetaSeleccionada) {
+            alert('Completá todos los campos.');
+            return;
+        }
+
+        const etiqueta = etiquetas.find(
+            e => Number(e.id) === Number(etiquetaSeleccionada)
+        );
+
+        const datos = {
+            alumnoId: Number(alumnoId),
+            nota: nota.trim(),
+            fecha: fecha,
+            etiquetaId: Number(etiquetaSeleccionada),
+            etiqueta: etiqueta.nombre
+        };
+
+        try {
+            setGuardando(true);
+
+            if (observacionEditando) {
+                // Modificar observación existente
+                const actualizada = await editarObservacion(
+                    observacionEditando.id,
+                    datos
+                );
+
+                setObservaciones(prev =>
+                    prev.map(obs =>
+                        obs.id === actualizada.id ? actualizada : obs
+                    )
+                );
+
+            } else {
+                // Crear observación nueva
+                const nueva = await guardarObservacion(datos);
+
+                setObservaciones(prev => [...prev, nueva]);
+            }
+
+            cerrarEdicion();
+
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo guardar la observación.');
+
+        } finally {
+            setGuardando(false);
+        }
+    }
+
+    async function handleEliminar(id) {
+        const confirmar = window.confirm(
+            '¿Estás seguro de que querés eliminar esta observación?'
+        );
+
+        if (!confirmar) return;
+
+        try {
+            await eliminarObservacion(id);
+
+            setObservaciones(prev =>
+                prev.filter(obs => obs.id !== id)
+            );
+
+        } catch (error) {
+            console.error(error);
+            alert('No se pudo eliminar la observación.');
+        }
+    }
+
     return (
         <div className='observaciones'>
             <div className='header'>
-                <button className='volver-aula'>Nombreaula</button>
+                <button className='volver-aula'><ChevronLeft size={'15px'}/>Nombreaula</button>
                 <p className='id-alumno'>Benicio</p>
                 <div className='info-alumno'>
                     <div className='data'>
@@ -65,7 +171,7 @@ function Observaciones() {
                         <p className='fecha-nacimiento'>10/10/10</p>
                         <p className='cant-observaciones'>anotaciones</p>
                     </div>
-                    <button className='generar-informe'>Generar informe</button>
+                    <button className='generar-informe'>Generar informe<ChevronRight size={'15px'}/></button>
                 </div>
             </div>
             <div className='body'>
@@ -105,9 +211,19 @@ function Observaciones() {
                                                     {observacion.etiqueta}
                                                 </div>
                                                 <div className='acciones'>
-                                                    <button className='editar'>Editar</button>
+                                                    <button
+                                                        className='editar'
+                                                        onClick={() => editarObservacion(observacion)}
+                                                    >
+                                                        Editar
+                                                    </button>
                                                     <p>·</p>
-                                                    <button className='borrar'>Eliminar</button>
+                                                    <button
+                                                        className='borrar'
+                                                        onClick={() => handleEliminar(observacion.id)}
+                                                    >
+                                                        Eliminar
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div className='texto'>
@@ -120,48 +236,66 @@ function Observaciones() {
                         )}
                     </div>
                 </div>
-                <button className='anotar'>+ Anotar</button>
-                <div className='nueva-observacion'>
-                    <div className='title'></div>
-                        <div className="seleccion">
-                            <label className="seleccion-title" htmlFor="nota">Nota</label>
-                            <textarea
-                                className="input"
-                                id="nota"
-                                value={nota}
-                                onChange={(e) => setNota(e.target.value)}
-                                placeholder="Escribí una observación sobre el alumno..."
-                            />
+
+                <button className='anotar' onClick={nuevaObservacion}>+ Anotar</button>
+
+                <div className={`edicion ${edicionAbierta ? 'abierta' : ''}`}>
+                    <header>
+                        <button className='cerrar' onClick={cerrarEdicion}>Cancelar</button>
+                        <div className='title'>
+                            {observacionEditando ? 'Editar observación' : 'Nueva observación'}
                         </div>
-                        <div className="seleccion">
-                            <label className="seleccion-title" htmlFor="fecha">
-                                Fecha
-                            </label>
-                            <input
-                                className="input"
-                                type="date"
-                                id="fecha"
-                                value={fecha}
-                                onChange={(e) => setFecha(e.target.value)}
-                            />
+                        <div className='info'>
+                            <p className='alumno'>Benicio</p>
+                            <p>·</p>
+                            <p className='sala'>Sala autista</p>
                         </div>
-                        <div className="seleccion">
-                            <label className ="seleccion-title" htmlFor="etiqueta">Etiqueta</label>
-                            <select
-                                className="input"
-                                id="etiqueta"
-                                value={etiquetaSeleccionada}
-                                onChange={(e) => setEtiquetaSeleccionada(e.target.value)}
-                            >
-                                <option value="">Seleccioná una etiqueta</option>
-                                {etiquetas.map((etiqueta) => (
-                                    <option key={etiqueta.id} value={etiqueta.id}>
-                                        {etiqueta.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <button className='guardar'>Guardar anotación</button>
+                    </header>
+                    <div className="seleccion">
+                        <label className="seleccion-title" htmlFor="nota">Nota</label>
+                        <textarea
+                            className="input"
+                            id="nota"
+                            value={nota}
+                            onChange={(e) => setNota(e.target.value)}
+                            placeholder="Escribí una observación sobre el alumno..."
+                        />
+                    </div>
+                    <div className="seleccion">
+                        <label className="seleccion-title" htmlFor="fecha">
+                            Fecha
+                        </label>
+                        <input
+                            className="input"
+                            type="date"
+                            id="fecha"
+                            value={fecha}
+                            onChange={(e) => setFecha(e.target.value)}
+                        />
+                    </div>
+                    <div className="seleccion">
+                        <label className ="seleccion-title" htmlFor="etiqueta">Etiqueta</label>
+                        <select
+                            className="input"
+                            id="etiqueta"
+                            value={etiquetaSeleccionada}
+                            onChange={(e) => setEtiquetaSeleccionada(e.target.value)}
+                        >
+                            <option value="">Seleccioná una etiqueta</option>
+                            {etiquetas.map((etiqueta) => (
+                                <option key={etiqueta.id} value={etiqueta.id}>
+                                    {etiqueta.nombre}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <button
+                        className='guardar'
+                        onClick={handleGuardar}
+                        disabled={guardando}
+                    >
+                        {guardando ? 'Guardando...' : 'Guardar anotación'}
+                    </button>
                 </div>
             </div>
         </div>

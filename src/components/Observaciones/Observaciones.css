@@ -159,9 +159,87 @@
     font-family: 'Lexend-SemiBold',sans-serif;
 }
 
-.observaciones .body .nueva-observacion{
+.observaciones .body .edicion {
     display: none;
 }
+.observaciones .body .edicion.abierta {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background-color: rgb(238, 241, 238);
+    padding: 24px 20px;
+    overflow-y: auto;
+}
+.observaciones .body .edicion .cerrar {
+    font-size: 15px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    border: none;
+    color: rgb(47, 107, 94);
+    font-family: 'Lexend-Regular';
+    padding: 0;
+}
+.observaciones .body .edicion .cerrar:hover{
+    color: rgb(31, 59, 54);
+}
+.observaciones .body .edicion .title{
+    margin: 0;
+    font-family: 'BricolageGrotesque-Bold',sans-serif;
+    font-size: 26px;
+}
+.observaciones .body .edicion .info{
+    font-size: 14px;
+    color: #5B6B66;
+    font-family: 'Lexend-Regular';
+    display: flex;
+    gap: 5px;
+}
+.observaciones .body .edicion .seleccion .seleccion-title{
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Lexend-SemiBold';
+}
+.observaciones .body .edicion .seleccion .input{
+    height: 48px;
+    width: 100%;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: rgb(91, 107, 102, 0.2);
+    text-decoration-color: rgb(31, 42, 46);
+    font-size: 16px;
+    padding-left: 14px;
+    padding-right: 14px;
+    flex-grow: 0;
+    resize: none;
+    font-family: 'Lexend-Regular';
+}
+.observaciones .body .edicion .seleccion .input#nota {
+    height: auto;
+    min-height: 120px;
+    max-height: 150px;
+}
+
+.observaciones .body .edicion .guardar{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    border-radius: 12px;
+    font: 500 16px 'Lexend-SemiBold',sans-serif;
+    background: #2F6B5E;
+    color: #fff;
+    text-decoration: none;
+    margin-top: auto;
+    border: none;
+}
+
+
+
 @media (min-width: 768px) {         /*DESKTOP*/
     .observaciones{
         height: 100%;
