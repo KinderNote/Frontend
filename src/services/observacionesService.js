@@ -73,13 +73,11 @@ export async function guardarObservacion(datos) {
 export async function editarObservacion(id, datos) {
     await new Promise(resolve => setTimeout(resolve, 300));
 
-    observacionesPrueba = observacionesPrueba.map(observacion =>
-        observacion.id === id
-            ? { ...observacion, ...datos }
-            : observacion
+    observacionesPrueba = observacionesPrueba.map(obs =>
+        obs.id === id ? { ...obs, ...datos } : obs
     );
 
-    return observacionesPrueba.find(observacion => observacion.id === id);
+    return observacionesPrueba.find(obs => obs.id === id);
 }
 
 // Eliminar una observación

@@ -242,21 +242,85 @@
 
 @media (min-width: 768px) {         /*DESKTOP*/
     .observaciones{
-        height: 100%;
-        flex: 1;
         padding: 32px 40px;
-        display: flex;
-        flex-direction: column;
         gap: 18px;
         min-width: 0;
+        max-width: none;
     }
-    .observaciones .header .id-alumno{
-        font-family: 'BricolageGrotesque-SemiBold',sans-serif;
-        font-size: 34px;
+    .observaciones .header .volver-aula{
+        display: none;
     }
     .observaciones .header .info-alumno{
         display: flex;
-        align-items: flex-end;
         justify-content: space-between;
+        align-items: flex-end;
+    }
+    .observaciones .header .info-alumno .data{
+        font-size: 14px;
+    }
+    .observaciones .header .info-alumno .generar-informe{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 44px;
+        padding: 0 18px;
+        border-radius: 10px;
+        font: 500 15px 'Lexend-Regular',sans-serif;
+        text-decoration: none;
+        background: #fff;
+        color: #1F2A2E;
+        border: 1px solid #CBD5D1;
+    }
+
+    .observaciones .body {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+        gap: 20px;
+    }
+
+    .observaciones .body .edicion {
+        width: 340px;
+        min-width: 0;
+        background: #fff;
+        border: 1px solid #DCE3E0;
+        border-radius: 14px;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .observaciones .body .edicion.abierta {
+        background: #fff;
+        position: static;
+        inset: auto;
+        z-index: auto;
+        overflow-y: visible;
+        padding: 20px;
+    }
+    .observaciones .body .edicion .cerrar{
+        display: none;
+    }
+
+    .observaciones .body .observaciones-hechas {
+        flex: 1;
+        min-width: 0;
+        min-height: 0;
+    }
+
+    .observaciones .body .observaciones-hechas .tarjetas {
+        width: 100%;
+    }
+    .observaciones .body .anotar{
+        display: none;
+    }
+    .observaciones .body .edicion .seleccion .input#nota{
+        height: auto;
+        min-width: none;
     }
 }

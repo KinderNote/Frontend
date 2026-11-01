@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight} from 'lucide-react';
 import './Observaciones.css';
 import { getEtiquetas, getObservacionesPorAlumno} from '../../services/observacionesService';
@@ -9,6 +10,8 @@ import {
 } from '../../services/observacionesService';
 
 function Observaciones() {
+    const navigate = useNavigate();
+
     const [alumnoId, setAlumnoId] = useState('');
     const [nota, setNota] = useState('');
     const [fecha, setFecha] = useState('');
@@ -62,30 +65,33 @@ function Observaciones() {
     const observacionesFiltradas = observaciones.filter((observacion) => {
         if (etiquetaFiltro === null) return true;
 
-        return observacion.alumnoId === etiquetaFiltro;
+        return Number(observacion.etiquetaId) === Number(etiquetaFiltro);
     });
 
-    function nuevaObservacion() {
+    function limpiarFormulario() {
         setNota('');
         setFecha(new Date().toLocaleDateString('en-CA'));
         setEtiquetaSeleccionada('');
-
         setObservacionEditando(null);
-        setEdicionAbierta(true);
     }
 
-    function editarObservacion(observacion) {
-        setNota(observacion.nota);
-        setFecha(observacion.fecha);
-        setEtiquetaSeleccionada(observacion.etiquetaId);
-
-        setObservacionEditando(observacion);
+    function nuevaObservacion() {
+        limpiarFormulario();
         setEdicionAbierta(true);
     }
 
     function cerrarEdicion() {
         setEdicionAbierta(false);
-        setObservacionEditando(null);
+        limpiarFormulario();
+    }
+
+    function cargarObservacionParaEditar(observacion) {
+        setNota(observacion.nota);
+        setFecha(observacion.fecha);
+        setEtiquetaSeleccionada(String(observacion.etiquetaId));
+
+        setObservacionEditando(observacion);
+        setEdicionAbierta(true);
     }
 
     async function handleGuardar() {
@@ -97,6 +103,10 @@ function Observaciones() {
         const etiqueta = etiquetas.find(
             e => Number(e.id) === Number(etiquetaSeleccionada)
         );
+        if (!etiqueta) {
+            alert('Seleccioná una etiqueta válida.');
+            return;
+        }
 
         const datos = {
             alumnoId: Number(alumnoId),
@@ -125,7 +135,6 @@ function Observaciones() {
             } else {
                 // Crear observación nueva
                 const nueva = await guardarObservacion(datos);
-
                 setObservaciones(prev => [...prev, nueva]);
             }
 
@@ -171,74 +180,10 @@ function Observaciones() {
                         <p className='fecha-nacimiento'>10/10/10</p>
                         <p className='cant-observaciones'>anotaciones</p>
                     </div>
-                    <button className='generar-informe'>Generar informe<ChevronRight size={'15px'}/></button>
+                    <button className='generar-informe' onClick={() => navigate('/borradores')} >Generar informe<ChevronRight size={'15px'}/></button>
                 </div>
             </div>
             <div className='body'>
-                <div className='observaciones-hechas'>
-                    <div className='etiquetas'>
-                        <button
-                            className={`etiqueta-filtro ${etiquetaFiltro === null ? 'activa' : ''}`}
-                            onClick={() => setEtiquetaFiltro(null)}
-                        >
-                            Todas
-                        </button>
-                            {etiquetas.map((etiqueta) => (
-                            <button
-                                key={etiqueta.id}
-                                className={`etiqueta-filtro ${etiquetaFiltro === etiqueta.id ? 'activa' : ''}`}
-                                onClick={() => setEtiquetaFiltro(etiqueta.id)}
-                            >
-                                {etiqueta.nombre}
-                            </button>
-                        ))}
-                    </div>
-                    <div className='tarjetas'>
-                        {cargandoObservaciones && <p>Cargando observaciones...</p>}
-                        {errorObservaciones && <p>{errorObservaciones}</p>}
-                        {!cargandoObservaciones && !errorObservaciones && (
-                            <>
-                                {observacionesFiltradas.length === 0 ? (
-                                    <p>No hay observaciones para mostrar.</p>
-                                ) : (
-                                    observacionesFiltradas.map((observacion) => (
-                                        <div className='tarjeta' key={observacion.id}>
-                                            <div className='tarjeta-header'>
-                                                <div className='fecha'>
-                                                    {observacion.fecha}
-                                                </div>
-                                                <div className='etiqueta'>
-                                                    {observacion.etiqueta}
-                                                </div>
-                                                <div className='acciones'>
-                                                    <button
-                                                        className='editar'
-                                                        onClick={() => editarObservacion(observacion)}
-                                                    >
-                                                        Editar
-                                                    </button>
-                                                    <p>·</p>
-                                                    <button
-                                                        className='borrar'
-                                                        onClick={() => handleEliminar(observacion.id)}
-                                                    >
-                                                        Eliminar
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div className='texto'>
-                                                {observacion.nota}
-                                            </div>
-                                        </div>
-                                    ))
-                                )}
-                            </>
-                        )}
-                    </div>
-                </div>
-
-                <button className='anotar' onClick={nuevaObservacion}>+ Anotar</button>
-
                 <div className={`edicion ${edicionAbierta ? 'abierta' : ''}`}>
                     <header>
                         <button className='cerrar' onClick={cerrarEdicion}>Cancelar</button>
@@ -297,6 +242,68 @@ function Observaciones() {
                         {guardando ? 'Guardando...' : 'Guardar anotación'}
                     </button>
                 </div>
+                <div className='observaciones-hechas'>
+                    <div className='etiquetas'>
+                        <button
+                            className={`etiqueta-filtro ${etiquetaFiltro === null ? 'activa' : ''}`}
+                            onClick={() => setEtiquetaFiltro(null)}
+                        >
+                            Todas
+                        </button>
+                            {etiquetas.map((etiqueta) => (
+                            <button
+                                key={etiqueta.id}
+                                className={`etiqueta-filtro ${etiquetaFiltro === etiqueta.id ? 'activa' : ''}`}
+                                onClick={() => setEtiquetaFiltro(etiqueta.id)}
+                            >
+                                {etiqueta.nombre}
+                            </button>
+                        ))}
+                    </div>
+                    <div className='tarjetas'>
+                        {cargandoObservaciones && <p>Cargando observaciones...</p>}
+                        {errorObservaciones && <p>{errorObservaciones}</p>}
+                        {!cargandoObservaciones && !errorObservaciones && (
+                            <>
+                                {observacionesFiltradas.length === 0 ? (
+                                    <p>No hay observaciones para mostrar.</p>
+                                ) : (
+                                    observacionesFiltradas.map((observacion) => (
+                                        <div className='tarjeta' key={observacion.id}>
+                                            <div className='tarjeta-header'>
+                                                <div className='fecha'>
+                                                    {observacion.fecha}
+                                                </div>
+                                                <div className='etiqueta'>
+                                                    {observacion.etiqueta}
+                                                </div>
+                                                <div className='acciones'>
+                                                    <button
+                                                        className='editar'
+                                                        onClick={() => cargarObservacionParaEditar(observacion)}
+                                                    >
+                                                        Editar
+                                                    </button>
+                                                    <p>·</p>
+                                                    <button
+                                                        className='borrar'
+                                                        onClick={() => handleEliminar(observacion.id)}
+                                                    >
+                                                        Eliminar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className='texto'>
+                                                {observacion.nota}
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </>
+                        )}
+                    </div>
+                </div>
+                <button className='anotar' onClick={nuevaObservacion}>+ Anotar</button>
             </div>
         </div>
     );

@@ -41,6 +41,7 @@
     .nav-container{
         height: 100vh;
         width: 232px;
+        min-width: 232px;
         font-family: 'Lexend-Regular',system-ui,sans-serif;
     }
     .nav-desktop{

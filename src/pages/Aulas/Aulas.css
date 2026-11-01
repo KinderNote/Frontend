@@ -10,5 +10,6 @@
 @media (min-width: 768px) {         /*DESKTOP*/
     .aulas-container{
         flex-direction: row-reverse;
+        justify-content: space-between;
     }
 }
