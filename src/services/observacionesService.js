@@ -1,92 +1,109 @@
-//const API_URL = 'https://kindernote-backend.onrender.com/kindernote/api';
-//const API_URL = 'http://localhost:8080/kindernote/api';
+const API_URL = 'http://localhost:8080/kindernote/api';
 
-const etiquetasPrueba = [
-    { id: 1, nombre: 'Lenguaje' },
-    { id: 2, nombre: 'Socialización' },
-    { id: 3, nombre: 'Motricidad' },
-    { id: 4, nombre: 'Autonomía' },
-    { id: 5, nombre: 'Expresión artística' },
-    { id: 6, nombre: 'Pensamiento matemático' },
-    { id: 7, nombre: 'Desarrollo emocional' },
-    { id: 8, nombre: 'Juego' },
-    { id: 9, nombre: 'Hábitos' }
-];
-
+// Obtener etiquetas
 export async function getEtiquetas() {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    const respuesta = await fetch(`${API_URL}/etiqueta`);
 
-    return etiquetasPrueba;
-}
-
-let observacionesPrueba = [
-    {
-        id: 1,
-        alumnoId: 1,
-        fecha: '2026-10-28',
-        nota: 'Participó activamente en la actividad de lectura.',
-        etiquetaId: 1,
-        etiqueta: 'Lenguaje'
-    },
-    {
-        id: 2,
-        alumnoId: 1,
-        fecha: '2026-10-26',
-        nota: 'Compartió los materiales con sus compañeros.',
-        etiquetaId: 2,
-        etiqueta: 'Socialización'
-    },
-    {
-        id: 3,
-        alumnoId: 1,
-        fecha: '2026-10-24',
-        nota: 'Logró realizar la actividad de encastre sin ayuda.',
-        etiquetaId: 3,
-        etiqueta: 'Motricidad'
+    if (!respuesta.ok) {
+        throw new Error('No se pudieron obtener las etiquetas.');
     }
-];
 
+    return await respuesta.json();
+}
 
+// Obtener observaciones de un alumno
 export async function getObservacionesPorAlumno(alumnoId) {
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    return observacionesPrueba.filter(
-        observacion => observacion.alumnoId === Number(alumnoId)
+    const respuesta = await fetch(
+        `${API_URL}/observacion/alumno/${alumnoId}`
     );
+
+    if (!respuesta.ok) {
+        throw new Error('No se pudieron obtener las observaciones.');
+    }
+
+    const datos = await respuesta.json();
+
+    return datos.map(obs => ({
+        id: obs.id,
+        alumnoId: obs.alumno?.id,
+        nota: obs.descripcion,
+        fecha: obs.fechaCreacion,
+        etiquetaId: obs.etiqueta?.id,
+        etiqueta: obs.etiqueta?.nombre
+    }));
 }
 
-// Guardar una observación nueva
+// Crear observación
 export async function guardarObservacion(datos) {
-    await new Promise(resolve => setTimeout(resolve, 300));
+    const respuesta = await fetch(`${API_URL}/observacion/crear`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            alumnoId: datos.alumnoId,
+            descripcion: datos.nota,
+            fechaCreacion: datos.fecha,
+            etiquetaId: datos.etiquetaId
+        })
+    });
 
-    const nuevaObservacion = {
-        id: Date.now(),
-        ...datos
+    if (!respuesta.ok) {
+        throw new Error('No se pudo guardar la observación.');
+    }
+
+    const obs = await respuesta.json();
+
+    return {
+        id: obs.id,
+        alumnoId: datos.alumnoId,
+        nota: obs.descripcion,
+        fecha: obs.fechaCreacion,
+        etiquetaId: datos.etiquetaId,
+        etiqueta: datos.etiqueta
     };
-
-    observacionesPrueba.push(nuevaObservacion);
-
-    return nuevaObservacion;
 }
 
-// Modificar una observación existente
+// Editar observación
 export async function editarObservacion(id, datos) {
-    await new Promise(resolve => setTimeout(resolve, 300));
+    const respuesta = await fetch(`${API_URL}/observacion/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            alumnoId: datos.alumnoId,
+            descripcion: datos.nota,
+            fechaCreacion: datos.fecha,
+            etiquetaId: datos.etiquetaId
+        })
+    });
 
-    observacionesPrueba = observacionesPrueba.map(obs =>
-        obs.id === id ? { ...obs, ...datos } : obs
-    );
+    if (!respuesta.ok) {
+        throw new Error('No se pudo modificar la observación.');
+    }
 
-    return observacionesPrueba.find(obs => obs.id === id);
+    const obs = await respuesta.json();
+
+    return {
+        id: obs.id,
+        alumnoId: datos.alumnoId,
+        nota: obs.descripcion,
+        fecha: obs.fechaCreacion,
+        etiquetaId: datos.etiquetaId,
+        etiqueta: datos.etiqueta
+    };
 }
 
-// Eliminar una observación
+// Eliminar observación
 export async function eliminarObservacion(id) {
-    await new Promise(resolve => setTimeout(resolve, 300));
+    const respuesta = await fetch(`${API_URL}/observacion/${id}`, {
+        method: 'DELETE'
+    });
 
-    observacionesPrueba = observacionesPrueba.filter(
-        observacion => observacion.id !== id
-    );
+    if (!respuesta.ok) {
+        throw new Error('No se pudo eliminar la observación.');
+    }
 
     return true;
 }

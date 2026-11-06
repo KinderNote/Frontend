@@ -38,11 +38,11 @@
 }
 
 @media (min-width: 768px) {         /*DESKTOP*/
-    .nav-container{
-        height: 100vh;
+    .nav-container {
+        height: 100%;
         width: 232px;
         min-width: 232px;
-        font-family: 'Lexend-Regular',system-ui,sans-serif;
+        font-family: 'Lexend-Regular', system-ui, sans-serif;
     }
     .nav-desktop{
         min-height: min-content;

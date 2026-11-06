@@ -9,17 +9,16 @@ import {
     eliminarObservacion
 } from '../../services/observacionesService';
 
-function Observaciones() {
+function Observaciones({ alumnoId }) {
     const navigate = useNavigate();
-
-    const [alumnoId, setAlumnoId] = useState('');
+    
     const [nota, setNota] = useState('');
     const [fecha, setFecha] = useState('');
     const [etiquetaSeleccionada, setEtiquetaSeleccionada] = useState('');
 
     const [etiquetas, setEtiquetas] = useState([]);
     const [etiquetaFiltro, setEtiquetaFiltro] = useState(null);
-    const [cargandoEtiquetas, setCargandoEtiquetas] = useState(true);
+    //const [cargandoEtiquetas, setCargandoEtiquetas] = useState(true);
 
     const [observaciones, setObservaciones] = useState([]);
     const [cargandoObservaciones, setCargandoObservaciones] = useState(true);
@@ -31,6 +30,11 @@ function Observaciones() {
 
     //OBSERVACIONES
     useEffect(() => {
+        if (!alumnoId) {
+            setObservaciones([]);
+            setCargandoObservaciones(false);
+            return;
+        }
         async function cargarObservaciones() {
             try {
                 setCargandoObservaciones(true);
@@ -56,7 +60,7 @@ function Observaciones() {
             } catch (error) {
                 console.error(error);
             } finally {
-                setCargandoEtiquetas(false);
+                //setCargandoEtiquetas(false);
             }
         }
         cargarEtiquetas();
