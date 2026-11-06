@@ -9,6 +9,10 @@
 }
 @media (min-width: 768px) {         /*DESKTOP*/
     .aulas-container{
-        flex-direction: row-reverse;
+        height: 100vh;
+        min-height: 0;
+        flex-direction:row-reverse;
+        justify-content: flex-end;
+        overflow: hidden;
     }
 }

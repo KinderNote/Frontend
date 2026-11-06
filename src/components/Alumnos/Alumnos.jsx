@@ -64,40 +64,8 @@ function Alumnos() {
   };
 
   return (
-    <div className="container-fluid p-0 min-vh-100 d-flex flex-column" style={{ backgroundColor: '#eef1ee' }}>
-      
-      {/* 1. HEADER MOBILE (Visible solo en pantallas chicas) */}
-      <header className="d-md-none text-white p-3 d-flex justify-content-between align-items-center" style={{ backgroundColor: '#1b3b33' }}>
-        <h4 className="fw-bold m-0" style={{ fontSize: '1.4rem' }}>
-          <span className="text-white">Kinder</span><span style={{ color: '#f39c12' }}>Note</span>
-        </h4>
-        <a href="#salir" className="text-warning text-decoration-none small fw-semibold">Salir</a>
-      </header>
-
+    <div className="alumnos-container" style={{ backgroundColor: '#eef1ee' }}>
       <div className="row g-0 flex-grow-1">
-        
-        {/* 2. BARRA LATERAL PC (Oculta en mobile) */}
-        <div className="col-md-3 col-lg-2 text-white p-4 d-none d-md-flex flex-column justify-content-between" style={{ backgroundColor: '#1b3b33', minHeight: '100vh' }}>
-          <div>
-            <h4 className="fw-bold mb-4">
-              <span className="text-white">Kinder</span><span style={{ color: '#f39c12' }}>Note</span>
-            </h4>
-            <ul className="nav flex-column gap-2">
-              <li className="nav-item"><a href="#aulas" className="nav-link text-white-50">Mis aulas</a></li>
-              <li className="nav-item">
-                <a href="#alumnos" className="nav-link text-white rounded px-3 py-2" style={{ backgroundColor: '#142e27' }}>
-                  Alumnos
-                </a>
-              </li>
-              <li className="nav-item"><a href="#etiquetas" className="nav-link text-white-50">Etiquetas</a></li>
-              <li className="nav-item"><a href="#informes" className="nav-link text-white-50">Informes</a></li>
-            </ul>
-          </div>
-          <div className="small text-white-50">
-            <p className="mb-1">Laura Gómez</p>
-            <a href="#salir" className="text-warning text-decoration-none">Cerrar sesión</a>
-          </div>
-        </div>
 
         {/* 3. CONTENIDO PRINCIPAL */}
         <div className="col-12 col-md-9 col-lg-10 p-3 p-md-5 pb-5">
@@ -156,14 +124,6 @@ function Alumnos() {
         </div>
 
       </div>
-
-      {/* 4. BARRA DE NAVEGACIÓN INFERIOR MOBILE */}
-      <nav className="d-md-none fixed-bottom bg-white border-top d-flex justify-content-around py-2 shadow-lg">
-        <a href="#aulas" className="text-center text-decoration-none text-muted small"><div>Aulas</div></a>
-        <a href="#alumnos" className="text-center text-decoration-none text-dark fw-bold small"><div>Alumnos</div></a>
-        <a href="#etiquetas" className="text-center text-decoration-none text-muted small"><div>Etiquetas</div></a>
-        <a href="#informes" className="text-center text-decoration-none text-muted small"><div>Informes</div></a>
-      </nav>
 
       {/* 5. PANEL LATERAL / BOTTOM SHEET (Crear o Editar Alumno) */}
       {mostrarPanel && (

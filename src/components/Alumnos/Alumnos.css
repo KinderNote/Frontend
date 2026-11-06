@@ -12,6 +12,13 @@
   overflow-y: auto;
 }
 
+.alumnos-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #eef1ee;
+}
+
 /* Comportamiento para PC*/
 @media (min-width: 768px) {
   .panel-lateral-custom {
@@ -26,4 +33,9 @@
     border-top-right-radius: 0;
     border-left: 1px solid #dee2e6;
   }
+
+  .alumnos-container {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
 }
