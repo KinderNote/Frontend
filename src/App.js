@@ -5,6 +5,7 @@ import Register from './pages/Register/Register.jsx';
 import Aulas from './pages/Aulas/Aulas.jsx';
 import Etiquetas from './pages/Etiquetas/Etiquetas.jsx';
 import Borrador from './pages/Borrador/Borrador.jsx';
+import Alumnos from './pages/Alumnos/Alumnos.jsx';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/clases" element={<Aulas />} />
+        <Route path="/alumnos" element={<Alumnos />} />
         <Route path="/etiquetas" element={<Etiquetas />} />  
         <Route path="/borradores" element={<Borrador />} /> 
         <Route path="*" element={<Navigate to="/login" replace />} />
