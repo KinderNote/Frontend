@@ -267,7 +267,6 @@ function Borrador() {
                 <div className={`footer-botones ${abierto ? 'abierto' : ''}`}>
                     <button className='boton-guardar' type="button"onClick={guardarBorradorActual}>Guardar borrador</button>
                     <div className='exportar-borrador'>
-                        {/*<button className='boton-generar' type="button" onClick={exportarPDF}>Exportar PDF</button>*/}
                         <BotonDescargarInforme/>
                         <button className='boton-generar' type="button">Exportar DOCX</button>
                     </div>

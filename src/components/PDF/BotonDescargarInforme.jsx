@@ -41,7 +41,7 @@ export const BotonDescargarInforme = () => {
   ];
 
   return (
-    <div style={{ marginTop: '20px' }}>
+    <div>
       <PDFDownloadLink
         document={<InformePdfDocument alumno={alumnoInfo} areas={listaAreas} />}
         fileName={`Informe_${alumnoInfo.nombre.replace(/\s+/g, '_')}.pdf`}
@@ -50,16 +50,19 @@ export const BotonDescargarInforme = () => {
           <button 
             disabled={loading}
             style={{
-              padding: '10px 20px',
-              backgroundColor: loading ? '#CBD5E0' : '#3182CE',
-              color: '#FFF',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontWeight: 'bold'
+              width: 'max-content',
+              height: '48px',
+              borderRadius: '12px',
+              padding: '0 18px',
+              margin: '0 auto',
+              font: '500 15px \'Lexend-Regular\',sans-serif',
+              flex: '1',
+              background: '#fff',
+              color: ' #1F2A2E',
+              border: '1px solid #CBD5D1',
             }}
           >
-            {loading ? 'Generando PDF...' : 'Descargar Informe en PDF'}
+            {loading ? 'Generando PDF...' : 'Exportar PDF'}
           </button>
         )}
       </PDFDownloadLink>
