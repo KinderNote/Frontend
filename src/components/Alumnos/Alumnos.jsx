@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Alumnos.css';
 
-function Alumnos() {
+function Alumnos({ aula, onVolver }) {
   // Estado simulado de alumnos (preparado para conectar con tu alumnosService del backend)
   const [alumnos, setAlumnos] = useState([
     { id: 1, nombre: "Sofía", apellido: "Martínez", dni: "45123456", sala: "Sala de 3 • Patitos" },
@@ -68,8 +68,14 @@ function Alumnos() {
       <div className="row g-0 flex-grow-1">
 
         {/* 3. CONTENIDO PRINCIPAL */}
-        <div className="col-12 col-md-9 col-lg-10 p-3 p-md-5 pb-5">
-          
+        <div className="flex-grow-1 p-3 p-md-5 pb-5">
+          <div className='sala-actual'>
+            <button className='boton-volver' onClick={onVolver}>
+              Mis aulas / 
+            </button>
+            <p>{aula.nombre}</p>
+          </div>
+
           <h2 className="fw-bold text-dark mb-3 fs-3 fs-md-2">Gestión de alumnos</h2>
 
           {/* Botón "+ Nuevo alumno" adaptable a mobile */}

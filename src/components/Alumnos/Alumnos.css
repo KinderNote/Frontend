@@ -19,6 +19,23 @@
   background-color: #eef1ee;
 }
 
+.sala-actual{
+  gap: 5px;
+  margin: 0 0 15px 0;
+  display: flex;
+  color: #5B6B66;
+  font-family: 'Lexend-Regular';
+  font-size: 14px;
+}
+.boton-volver{
+  border: none;
+  padding: 0;
+  color: rgb(47, 107, 94);
+}
+.boton-volver:hover{
+  color: rgb(27, 59, 51);
+}
+
 /* Comportamiento para PC*/
 @media (min-width: 768px) {
   .panel-lateral-custom {
@@ -37,5 +54,8 @@
   .alumnos-container {
     flex-direction: row-reverse;
     justify-content: flex-end;
-}
+  }
+  .sala-actual{
+    font-size: 13px;
+  }
 }
