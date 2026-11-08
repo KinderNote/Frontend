@@ -1,0 +1,382 @@
+/* PANEL LATERAL */
+
+/* CONTENEDOR PRINCIPAL */
+.alumnos-container {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #eef1ee;
+}
+
+.contenido-principal {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  padding: 16px 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ELEMENTOS QUE NO DEBEN ACHICARSE */
+.sala-actual,
+.contenido-principal h2,
+.contenido-principal > .d-grid {
+  flex-shrink: 0;
+}
+
+/* NAVEGACIÓN Y ENCABEZADO */
+.sala-actual {
+  display: flex;
+  gap: 5px;
+  color: #5B6B66;
+  font-family: 'Lexend-Regular';
+  font-size: 14px;
+}
+
+.boton-volver {
+  border: none;
+  padding: 0;
+  color: rgb(47, 107, 94);
+}
+
+.boton-volver:hover {
+  color: rgb(27, 59, 51);
+}
+
+.titulo-sala{
+  margin: 0;
+  font-family: 'BricolageGrotesque-Bold',sans-serif;
+  font-size: 34px;
+}
+
+.boton-nuevo-alumno {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font: 500 15px 'Lexend-Regular',sans-serif;
+  background: #2F6B5E;
+  color: #fff;
+  text-decoration: none;
+  border: 0;
+}
+.boton-nuevo-alumno:hover {
+  background-color: #2F5A52;
+}
+
+.header-titulo{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.data-alumnos{
+  font-size: 14px;
+  color: #5B6B66;
+  font-family: 'Lexend-Regular',sans-serif;
+}
+/* LISTA DE ALUMNOS */
+.desktop-alumnos {
+  display: none;
+}
+
+.lista-alumnos-mobile {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  background-color: #fff;
+  border: 1px solid #DCE3E0;
+  border-radius: 16px;
+}
+
+.alumno-card-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 20px;
+  border: none;
+  border-bottom: 1px solid #E3E8E6;
+  background-color: #fff;
+  text-decoration: none;
+}
+
+.alumno-card-mobile:hover {
+  background-color: #f4f6f4;
+}
+
+.mobile-alumno-nombre {
+  font-family: 'Lexend-Regular';
+  font-size: 16px;
+  color: #1F2A2E;
+}
+
+.mobile-alumno-datos {
+  font-size: 14px;
+  color: #7b8982;
+}
+
+/* DESKTOP */
+@media (min-width: 768px) {
+
+  .alumnos-container {
+    height: 100vh;
+  }
+
+  .contenido-principal {
+    padding: 36px 40px;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  .sala-actual {
+    font-size: 13px;
+  }
+
+  .desktop-alumnos {
+    display: block;
+  }
+
+  .lista-alumnos-mobile {
+    display: none;
+  }
+
+  /* TABLA */
+  .lista-alumnos {
+    width: 100%;
+    background: white;
+    border: 1px solid #dee5e0;
+    border-radius: 12px;
+  }
+
+  .alumno-grid {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1fr 1.5fr 1.3fr;
+    align-items: center;
+    min-width: 700px;
+    min-height: 20px;
+    padding: 10px;
+  }
+
+  .alumno-header {
+    font-family: 'Lexend-Regular';
+    background: #f4f6f4;
+    color: #68766f;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-bottom: 1px solid #dee5e0;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .alumno-item {
+    border-bottom: 1px solid #e9eeeb;
+    font-family: 'Lexend-Regular';
+    color: black;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .alumno-item:last-child {
+    border-bottom: none;
+  }
+
+  .alumno-nombre {
+    border: none;
+    padding: 0;
+    background: none;
+    color: rgb(47, 107, 94);
+    font-family: 'Lexend-Regular';
+    text-align: left;
+  }
+
+  .alumno-nombre:hover {
+    color: rgb(27, 59, 51);
+  }
+
+  /* ACCIONES */
+  .alumno-acciones {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .alumno-acciones button {
+    border: none;
+    padding: 0;
+    background: none;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .accion-editar {
+    color: #2F6B5E;
+  }
+
+  .accion-eliminar {
+    color: #A23B2A;
+  }
+}
+
+/* PANEL LATERAL*/
+.panel-lateral-custom {
+  width: 100%;
+  background: #fff;
+  border-left: 1px solid #DCE3E0;
+  padding: 36px 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* TIRADOR MOBILE */
+.panel-tirador-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.panel-tirador {
+  width: 40px;
+  height: 4px;
+  border-radius: 10px;
+  background-color: #adb5bd;
+}
+
+/* ENCABEZADO */
+.panel-encabezado {
+  margin: 0;
+  font-family: 'BricolageGrotesque-Bold',sans-serif;
+  font-size: 29px;
+}
+
+/* FORMULARIO */
+.form-alumno {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 13px;
+  font-family: 'Lexend-Regular';
+}
+
+.campo-alumno {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.campo-alumno label {
+  color: #68766f;
+  font-size: 13px;
+  font-weight: 500;
+}
+.title-ingreso{
+  display: flex;
+  gap: 5px;
+}
+.input-required{
+  color:#A23B2A;
+}
+
+.campo-alumno input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #DCE3E0;
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.campo-alumno input:focus {
+  border-color: #2F6B5E;
+  box-shadow: 0 0 0 2px rgba(47, 107, 94, 0.12);
+}
+
+/* BOTONES */
+.panel-botones {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.boton-guardar-alumno,
+.boton-cancelar-alumno {
+  width: 50%;
+  padding: 11px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton-guardar-alumno {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font: 500 15px 'Lexend-Regular',sans-serif;
+  background: #2F6B5E;
+  color: #fff;
+  text-decoration: none;
+  border: 0;
+}
+
+.boton-guardar-alumno:hover {
+  background-color: #2F5A52;
+}
+
+.boton-cancelar-alumno {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font: 500 15px 'Lexend-Regular',sans-serif;
+  text-decoration: none;
+  background: #fff;
+  color: #1F2A2E;
+  border: 1px solid #CBD5D1;
+}
+
+.boton-cancelar-alumno:hover {
+  background-color: #f4f6f4;
+}
+
+/* DESKTOP */
+@media (min-width: 768px) {
+  .panel-lateral-custom {
+    top: 0;
+    bottom: 0;
+    left: auto;
+    right: 0;
+    width: 380px;
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    border-left: 1px solid #dee2e6;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .panel-tirador-container {
+    display: none;
+  }
+}

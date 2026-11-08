@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './Aulas.css';
 import Nav from '../../components/Nav/Nav';
+import Alumnos from '../../components/Alumnos/Alumnos';
 import { getAulasPorMaestra, crearAula, editarAula as editarAulaApi, eliminarAula } from '../../services/aulaService';
 
 function Aulas() {
   const usuario = JSON.parse(localStorage.getItem('usuario'));
   const usuarioId = usuario?.id;
 
+  const [aulaSeleccionada, setAulaSeleccionada] = useState(null);
   const [aulas, setAulas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
@@ -76,64 +78,76 @@ function Aulas() {
     }
   };
 
+  const abrirAula = (aula) => {
+    setAulaSeleccionada(aula);
+  };
+
   return (
     <div className="aulas-container" style={{ backgroundColor: '#eef1ee' }}>
 
-      <div className="aulas-contenido">
-        <div className="p-3 p-md-5 pb-5">
+      {aulaSeleccionada ? (
+        <Alumnos aula={aulaSeleccionada} nombreAula={aulaSeleccionada.nombre} onVolver={() => setAulaSeleccionada(null)} />
+      ) : (
+        <div className="aulas-contenido">
+          <div className="p-3 p-md-5 pb-5">
 
-          <h2 className="fw-bold text-dark mb-3 fs-3 fs-md-2">Mis aulas</h2>
+            <h2 className="fw-bold text-dark mb-3 fs-3 fs-md-2">Mis aulas</h2>
 
-          <div className="d-grid d-sm-block mb-4">
-            <button 
-              onClick={abrirPanelCrear}
-              className="btn text-white py-2 px-4 rounded-3 fw-semibold"
-              style={{ backgroundColor: '#1b3b33' }}
-            >
-              + Nueva aula
-            </button>
-          </div>
+            <div className="d-grid d-sm-block mb-4">
+              <button 
+                onClick={abrirPanelCrear}
+                className="btn text-white py-2 px-4 rounded-3 fw-semibold"
+                style={{ backgroundColor: '#1b3b33' }}
+              >
+                + Nueva aula
+              </button>
+            </div>
 
-          {error && <div className="alert alert-danger py-2 small">{error}</div>}
-          {cargando && <p className="text-muted small">Cargando aulas...</p>}
-          {!cargando && !error && aulas.length === 0 && (
-            <p className="text-muted small">Todavía no tenés aulas. Creá la primera.</p>
-          )}
+            {error && <div className="alert alert-danger py-2 small">{error}</div>}
+            {cargando && <p className="text-muted small">Cargando aulas...</p>}
+            {!cargando && !error && aulas.length === 0 && (
+              <p className="text-muted small">Todavía no tenés aulas. Creá la primera.</p>
+            )}
 
-          {/* LISTADO DE TARJETAS */}
-          <div className="row g-3">
-            {aulas.map((aula) => (
-              <div className="col-12 col-md-6 col-lg-4" key={aula.id}>
-                <div className="card border border-secondary border-opacity-25 shadow-sm rounded-4 p-3 bg-white">
-                  <div className="card-body p-1">
-                    <h5 className="card-title fw-bold text-dark mb-1">{aula.nombre}</h5>
-                    
-                    <hr className="my-2 opacity-10" />
+            {/* LISTADO DE TARJETAS */}
+            <div className="row g-3">
+              {aulas.map((aula) => (
+                <div className="col-12 col-md-6 col-lg-4" key={aula.id}>
+                  <div className="card border border-secondary border-opacity-25 shadow-sm rounded-4 p-3 bg-white">
+                    <div className="card-body p-1">
+                      <h5 className="card-title fw-bold text-dark mb-1">{aula.nombre}</h5>
+                      
+                      <hr className="my-2 opacity-10" />
 
-                    <div className="d-flex gap-3 pt-1">
-                      <button className="btn btn-link p-0 text-success text-decoration-none fw-bold small">Abrir</button>
-                      <button 
-                        className="btn btn-link p-0 text-secondary text-decoration-none fw-bold small"
-                        onClick={() => abrirPanelEditar(aula)}
-                      >
-                        Editar
-                      </button>
-                      <button 
-                        className="btn btn-link p-0 text-danger text-decoration-none fw-bold small"
-                        onClick={() => eliminarAulaPorId(aula.id, aula.nombre)}
-                      >
-                        Eliminar
-                      </button>
+                      <div className="d-flex gap-3 pt-1">
+                        <button 
+                          className="btn btn-link p-0 text-success text-decoration-none fw-bold small"
+                          onClick={() => abrirAula(aula)}
+                        >
+                          Abrir
+                        </button>
+                        <button 
+                          className="btn btn-link p-0 text-secondary text-decoration-none fw-bold small"
+                          onClick={() => abrirPanelEditar(aula)}
+                        >
+                          Editar
+                        </button>
+                        <button 
+                          className="btn btn-link p-0 text-danger text-decoration-none fw-bold small"
+                          onClick={() => eliminarAulaPorId(aula.id, aula.nombre)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
           </div>
-
         </div>
-      </div>
-
+      )}
       <Nav />
 
       {/* 5. PANELES CONDICIONALES (SEPARADOS PARA EVITAR CONFLICTOS) */}
