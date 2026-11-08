@@ -3,13 +3,15 @@ import './Borrador.css';
 import { ChevronLeft} from 'lucide-react';
 import Nav from '../../components/Nav/Nav';
 import {
-    getAlumnos,
-    getAulas,
+    getAlumnosPorAula,
     getBorradoresPorMaestra,
     generarBorrador,
-    guardarBorrador
+    guardarBorrador,
+    getBorradoresPorAlumno
 } from '../../services/informeService';
-import {BotonDescargarInforme} from '../../components/PDF/BotonDescargarInforme'
+import {getAulasPorMaestra} from '../../services/aulaService';
+import {BotonExportarPdf} from '../../components/PDF/BotonExportarPdf'
+import {BotonExportarDocx} from '../../components/DOCX/BotonExportarDocx'
 
 function Borrador() {
     const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -19,7 +21,7 @@ function Borrador() {
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState('');
     const [aulas, setAulas] = useState([]);
-    const [alumno, setAlumno] = useState([]);
+    const [alumnos, setAlumnos] = useState([]);
 
     const [aulaSeleccion, setAulaSeleccion] = useState('');
     const [alumnoSeleccion, setAlumnoSeleccion] = useState('');
@@ -34,15 +36,13 @@ function Borrador() {
     useEffect(() => {
         async function cargarDatos() {
             try {
-                const [datosAlumnos, datosAulas] = await Promise.all([
-                    getAlumnos(),
-                    getAulas()
+                const [datosAulas] = await Promise.all([
+                    getAulasPorMaestra(usuarioId)
                 ]);
 
-                setAlumno(datosAlumnos);
                 setAulas(datosAulas);
             } catch (error) {
-                console.error('Error al cargar alumnos y aulas:', error);
+                console.error('Error al cargar aulas:', error);
                 setError(error.message);
             }
         }
@@ -50,16 +50,21 @@ function Borrador() {
     }, []);
 
     useEffect(() => {
-        async function cargarBorradores() {
+        async function actualizarBorradores() {
             try {
-                if (!usuarioId) {
-                    throw new Error('No se encontró la maestra de la sesión.');
+                if (alumnoSeleccion === "") {
+                    setBorradores([])
                 }
+                else {
+                    const datos = await getBorradoresPorAlumno(alumnoSeleccion);
+                    //console.log('Borradores recibidos:', datos);
+                    console.log('Primer borrador:', datos[0]);
+                    setBorradores(datos);
+                    
+                }
+                
 
-                const datos = await getBorradoresPorMaestra(usuarioId);
-                //console.log('Borradores recibidos:', datos);
-                //console.log('Primer borrador:', datos[0]);
-                setBorradores(datos);
+                
             } catch (error) {
                 console.error(error);
                 setError(error.message);
@@ -67,8 +72,33 @@ function Borrador() {
                 setCargando(false);
             }
         }
-        cargarBorradores();
-    }, [usuarioId]);
+        actualizarBorradores();
+    }, [alumnoSeleccion]);
+
+    useEffect(() => {
+        async function actualizarAlumnos() {
+            try {
+                console.log("-" + aulaSeleccion + "-")
+                if (aulaSeleccion === "") {
+                    setAlumnos([])
+                }
+                else {
+                    const alumnos = await getAlumnosPorAula(aulaSeleccion)
+                    setAlumnos(alumnos)
+                }
+            } catch (error) {
+                console.error(error);
+                setError(error.message);
+            }
+        }
+
+        actualizarAlumnos()
+    }, [aulaSeleccion])
+
+    /*async function actualizarBoton() {
+        console.log("boton actualizado")
+        setBotonPdf(<BotonDescargarInforme alumno={alumnos[alumnoSeleccion - 1]} maestra={usuario} aulaNombre={aulas[aulaSeleccion - 1].nombre} textoPorArea={borradorActual.textoPorArea}/>)
+    }*/
 
     async function solicitarBorrador() {
         if (!aulaSeleccion || !alumnoSeleccion || !fechaDesde || !fechaHasta) {
@@ -81,7 +111,7 @@ function Borrador() {
             return;
         }
 
-        const alumnoActual = alumno.find(
+        const alumnoActual = alumnos.find(
             (a) => String(a.id) === String(alumnoSeleccion)
         );
 
@@ -176,7 +206,7 @@ function Borrador() {
                         <div className="seleccion">
                             <label className ="seleccion-title" htmlFor="alumno">Alumno</label>
                             <select className="input" id="alumno" value={alumnoSeleccion} onChange={(e) => setAlumnoSeleccion(e.target.value)}>
-                                <option value="">Seleccioná un alumno</option>{alumno.map((alumno) => (<option key={alumno.id} value={alumno.id}>{alumno.nombre}</option>))}
+                                <option value="">Seleccioná un alumno</option>{alumnos.map((alumno) => (<option key={alumno.id} value={alumno.id}>{alumno.nombre}</option>))}
                             </select>
                         </div>
 
@@ -208,9 +238,7 @@ function Borrador() {
                     <div className='guardados-container'>
                         <p className='title-guardados'>BORRADORES GUARDADOS</p>
                         {borradores.map((borrador) => {
-                            const alumnoBorrador = alumno.find(
-                                (a) => String(a.id) === String(borrador.alumno?.id)
-                            );
+                            const alumnoBorrador = alumnos[alumnoSeleccion - 1]
 
                             return (
                                 <button
@@ -222,11 +250,15 @@ function Borrador() {
                                             ...borrador,
                                             nombre: alumnoBorrador?.nombre || 'Alumno no encontrado',
                                             apellido: alumnoBorrador?.apellido || '',
-                                            contenido: borrador.texto,
-                                            fechaGeneracion: borrador.fechaCreacion
+                                            contenido: "Fix: Placeholder",
+                                            fechaGeneracion: borrador.fechaCreacion,
+                                            textoPorArea: borrador.textoPorArea
                                         });
 
+                                        
                                         setAbierto(true);
+                                        console.log(borradorActual)
+                                        
                                     }}
                                 >
                                     <span className="info-nombre">
@@ -267,8 +299,26 @@ function Borrador() {
                 <div className={`footer-botones ${abierto ? 'abierto' : ''}`}>
                     <button className='boton-guardar' type="button"onClick={guardarBorradorActual}>Guardar borrador</button>
                     <div className='exportar-borrador'>
-                        <BotonDescargarInforme/>
-                        <button className='boton-generar' type="button">Exportar DOCX</button>
+                        {borradorActual ? (
+                            <BotonExportarPdf 
+                                alumno={alumnos[alumnoSeleccion - 1]}
+                                maestra={usuario}
+                                aulaNombre={aulas[aulaSeleccion - 1].nombre}
+                                informe={borradorActual}
+                            />
+                        ) : (
+                            <button className='boton-exportar' type="button" disabled={true}>Exportar PDF</button>
+                        )}
+                        {borradorActual ? (
+                            <BotonExportarDocx 
+                                alumno={alumnos[alumnoSeleccion - 1]}
+                                maestra={usuario}
+                                aulaNombre={aulas[aulaSeleccion - 1].nombre}
+                                informe={borradorActual}
+                            />
+                        ) : (
+                            <button className='boton-exportar' type="button" disabled={true}>Exportar DOCX</button>
+                        )}
                     </div>
                 </div>
             </div>

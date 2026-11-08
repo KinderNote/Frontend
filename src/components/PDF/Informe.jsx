@@ -21,7 +21,7 @@ export const InformePdfDocument = ({ alumno, areas }) => (
 
         <View style={styles.headerRow}>
           <Text style={styles.label}>Sala:</Text>
-          <Text style={styles.value}>{alumno.sala}</Text>
+          <Text style={styles.value}>{alumno.aula}</Text>
         </View>
 
         <View style={styles.headerRow}>
