@@ -2,26 +2,22 @@ import React, { useState } from 'react';
 import './Alumnos.css';
 
 function Alumnos({ aula, onVolver }) {
-  // Estado simulado de alumnos (preparado para conectar con tu alumnosService del backend)
   const [alumnos, setAlumnos] = useState([
-    {id: 1,nombre: "Sofía",apellido: "Martínez",dni: "45123456",fechaNacimiento: "12/04/2022",cantidadAnotaciones: 8,ultimaAnotacion: "05/11/2026"},
-    {id: 2,nombre: "Mateo",apellido: "González",dni: "45123457",fechaNacimiento: "15/06/2021",cantidadAnotaciones: 5,ultimaAnotacion: "20/10/2026"},
-    {id: 3,nombre: "Valentina",apellido: "Rodríguez",dni: "45123458",fechaNacimiento: "22/09/2020",cantidadAnotaciones: 12,ultimaAnotacion: "10/09/2026"},
-    {id: 4,nombre: "Benjamínadsasdasdasdasda",apellido: "López",dni: "45123459",fechaNacimiento: "30/11/2019",cantidadAnotaciones: 3,ultimaAnotacion: "15/08/2026"},
-    {id: 5,nombre: "Isabella",apellido: "Pérez",dni: "45123460",fechaNacimiento: "05/02/2018",cantidadAnotaciones: 7,ultimaAnotacion: "25/07/2026"},
-    {id: 6,nombre: "Santiago",apellido: "Gómez",dni: "45123461",fechaNacimiento: "18/03/2017",cantidadAnotaciones: 10,ultimaAnotacion: "30/06/2026"},
+    {id: 1,nombre: "Sofía",apellido: "Martínez",fechaNacimiento: "2022-04-12",cantidadAnotaciones: 8,ultimaAnotacion: "05/11/2026"},
+    {id: 2,nombre: "Mateo",apellido: "González",fechaNacimiento: "2021-06-15",cantidadAnotaciones: 5,ultimaAnotacion: "20/10/2026"},
+    {id: 3,nombre: "Valentina",apellido: "Rodríguez",fechaNacimiento: "2020-09-22",cantidadAnotaciones: 12,ultimaAnotacion: "10/09/2026"}
   ]);
 
   const [mostrarPanel, setMostrarPanel] = useState(false);
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
-  const [dni, setDni] = useState("");
+  const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [idEditando, setIdEditando] = useState(null);
 
   const abrirPanelCrear = () => {
     setNombre("");
     setApellido("");
-    setDni("");
+    setFechaNacimiento("");
     setIdEditando(null);
     setMostrarPanel(true);
   };
@@ -29,7 +25,7 @@ function Alumnos({ aula, onVolver }) {
   const abrirPanelEditar = (alumno) => {
     setNombre(alumno.nombre);
     setApellido(alumno.apellido);
-    setDni(alumno.dni);
+    setFechaNacimiento(alumno.fechaNacimiento || "");
     setIdEditando(alumno.id);
     setMostrarPanel(true);
   };
@@ -39,24 +35,29 @@ function Alumnos({ aula, onVolver }) {
     if (!nombre.trim() || !apellido.trim()) return;
 
     if (idEditando !== null) {
-      // Lógica de edición
-      setAlumnos(alumnos.map(a => a.id === idEditando ? { ...a, nombre, apellido, dni } : a));
+      // Edición
+      setAlumnos(alumnos.map(a =>
+        a.id === idEditando
+          ? { ...a, nombre, apellido, fechaNacimiento }
+          : a
+      ));
     } else {
-      // Lógica de creación
+      // Creación
       const nuevoAlumno = {
         id: Date.now(),
         nombre,
         apellido,
-        dni: dni || "Sin DNI",
+        fechaNacimiento,
         sala: "Sala asignada"
       };
+
       setAlumnos([...alumnos, nuevoAlumno]);
     }
 
     setMostrarPanel(false);
     setNombre("");
     setApellido("");
-    setDni("");
+    setFechaNacimiento("");
     setIdEditando(null);
   };
 
@@ -65,6 +66,13 @@ function Alumnos({ aula, onVolver }) {
       setAlumnos(alumnos.filter(a => a.id !== id));
     }
   };
+
+  function formatearFecha(fecha) {
+    if (!fecha) return "Sin fecha";
+
+    const [anio, mes, dia] = fecha.split("-");
+    return `${dia}/${mes}/${anio}`;
+  }
 
   return (
     <div className="alumnos-container">
@@ -108,7 +116,7 @@ function Alumnos({ aula, onVolver }) {
                         {alumno.nombre} {alumno.apellido}
                     </button>
 
-                    <span>{alumno.fechaNacimiento || '-'}</span>
+                    <span>{formatearFecha(alumno.fechaNacimiento) || '-'}</span>
                     <span>{alumno.cantidadAnotaciones ?? 0}</span>
                     <span>{alumno.ultimaAnotacion || '-'}</span>
 
@@ -157,7 +165,7 @@ function Alumnos({ aula, onVolver }) {
               </span>
 
               <span className="mobile-alumno-datos">
-                {alumno.fechaNacimiento || '-'}
+                {formatearFecha(alumno.fechaNacimiento) || '-'}
                 <span> · </span>
                 {alumno.cantidadAnotaciones ?? 0} anotaciones
               </span>
@@ -172,31 +180,29 @@ function Alumnos({ aula, onVolver }) {
 
         </div>
       </div>
-      {/* 5. PANEL LATERAL / BOTTOM SHEET (Crear o Editar Alumno) */}
+
+      {/* PANEL LATERAL / BOTTOM SHEET (Crear o Editar Alumno) */}
       {mostrarPanel && (
-        <div className="bg-white shadow-lg p-4 rounded-top-4 rounded-md-0 panel-lateral-custom">
-          {/* Tirador visual gris para mobile */}
-          <div className="d-block d-md-none text-center mb-2">
-            <div className="bg-secondary opacity-50 rounded-pill mx-auto" style={{ width: '40px', height: '4px' }}></div>
+        <div className="panel-lateral-custom">
+
+          {/* Tirador visual para mobile */}
+          <div className="panel-tirador-container">
+            <div className="panel-tirador"></div>
           </div>
 
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <h5 className="fw-bold text-dark m-0">
-              {idEditando ? "Editar alumno" : "Nuevo alumno"}
-            </h5>
-            <button 
-              type="button" 
-              className="btn-close" 
-              onClick={() => setMostrarPanel(false)}
-            ></button>
+          {/* ENCABEZADO */}
+          <div className="panel-encabezado">
+            <p>{idEditando ? "Editar alumno" : "Agregar alumno"}</p>
           </div>
 
-          <form onSubmit={guardarAlumno}>
-            <div className="mb-3">
-              <label className="form-label fw-semibold small text-muted">Nombre *</label>
-              <input 
-                type="text" 
-                className="form-control rounded-3 py-2" 
+          {/* FORMULARIO */}
+          <form onSubmit={guardarAlumno} className="form-alumno">
+
+            <div className="campo-alumno">
+              <label className="title-ingreso" htmlFor="nombre">Nombre <span className="input-required">*</span></label>
+              <input
+                id="nombre"
+                type="text"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder="Ej. Sofía"
@@ -204,11 +210,11 @@ function Alumnos({ aula, onVolver }) {
               />
             </div>
 
-            <div className="mb-3">
-              <label className="form-label fw-semibold small text-muted">Apellido *</label>
-              <input 
-                type="text" 
-                className="form-control rounded-3 py-2" 
+            <div className="campo-alumno">
+              <label className="title-ingreso" htmlFor="apellido">Apellido <span className="input-required">*</span></label>
+              <input
+                id="apellido"
+                type="text"
                 value={apellido}
                 onChange={(e) => setApellido(e.target.value)}
                 placeholder="Ej. Martínez"
@@ -216,34 +222,30 @@ function Alumnos({ aula, onVolver }) {
               />
             </div>
 
-            <div className="mb-3">
-              <label className="form-label fw-semibold small text-muted">DNI</label>
-              <input 
-                type="text" 
-                className="form-control rounded-3 py-2" 
-                value={dni}
-                onChange={(e) => setDni(e.target.value)}
-                placeholder="Ej. 45123456"
+            <div className="campo-alumno">
+              <label className="title-ingreso" htmlFor="fechaNacimiento">Fecha de nacimiento <span className="input-required">*</span></label>
+              <input
+                id="fechaNacimiento"
+                type="date"
+                value={fechaNacimiento}
+                onChange={(e) => setFechaNacimiento(e.target.value)}
+                required
               />
             </div>
 
-            <div className="d-flex gap-2 mt-4">
-              <button 
-                type="submit" 
-                className="btn text-white w-50 fw-semibold py-2 rounded-3" 
-                style={{ backgroundColor: '#1b3b33' }}
-              >
-                Guardar
-              </button>
-              <button 
-                type="button" 
-                className="btn btn-outline-secondary w-50 fw-semibold py-2 rounded-3"
+            {/* BOTONES */}
+            <div className="panel-botones">
+              <button type="submit" className="boton-guardar-alumno">Guardar</button>
+              <button
+                type="button"
+                className="boton-cancelar-alumno"
                 onClick={() => setMostrarPanel(false)}
-              >
+                >
                 Cancelar
               </button>
             </div>
-          </form>
+
+            </form>
         </div>
       )}
 
