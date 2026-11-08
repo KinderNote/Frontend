@@ -1,18 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Alumnos.css';
+import {
+  getAlumnos,
+  crearAlumno,
+  editarAlumno,
+  eliminarAlumno as eliminarAlumnoApi
+} from '../../services/alumnoService';
 
 function Alumnos({ aula, onVolver }) {
-  const [alumnos, setAlumnos] = useState([
-    {id: 1,nombre: "Sofía",apellido: "Martínez",fechaNacimiento: "2022-04-12",cantidadAnotaciones: 8,ultimaAnotacion: "05/11/2026"},
-    {id: 2,nombre: "Mateo",apellido: "González",fechaNacimiento: "2021-06-15",cantidadAnotaciones: 5,ultimaAnotacion: "20/10/2026"},
-    {id: 3,nombre: "Valentina",apellido: "Rodríguez",fechaNacimiento: "2020-09-22",cantidadAnotaciones: 12,ultimaAnotacion: "10/09/2026"}
-  ]);
+  const [alumnos, setAlumnos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
   const [mostrarPanel, setMostrarPanel] = useState(false);
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [idEditando, setIdEditando] = useState(null);
+
+  useEffect(() => {
+    async function cargarAlumnos() {
+      try {
+        setCargando(true);
+        setError("");
+
+        const datos = await getAlumnos();
+
+        const alumnosDelAula = datos.filter(
+          alumno => Number(alumno.aula?.id) === Number(aula.id)
+        );
+
+        setAlumnos(alumnosDelAula);
+
+      } catch (error) {
+        console.error("Error al cargar alumnos:", error);
+        setError("No se pudieron cargar los alumnos.");
+      } finally {
+        setCargando(false);
+      }
+    }
+
+    cargarAlumnos();
+  }, [aula.id]);
 
   const abrirPanelCrear = () => {
     setNombre("");
@@ -25,53 +54,77 @@ function Alumnos({ aula, onVolver }) {
   const abrirPanelEditar = (alumno) => {
     setNombre(alumno.nombre);
     setApellido(alumno.apellido);
-    setFechaNacimiento(alumno.fechaNacimiento || "");
+    setFechaNacimiento(convertirFechaInput(alumno.fechaNacimiento));
     setIdEditando(alumno.id);
     setMostrarPanel(true);
   };
 
-  const guardarAlumno = (e) => {
+  const guardarAlumno = async (e) => {
     e.preventDefault();
-    if (!nombre.trim() || !apellido.trim()) return;
 
-    if (idEditando !== null) {
-      // Edición
-      setAlumnos(alumnos.map(a =>
-        a.id === idEditando
-          ? { ...a, nombre, apellido, fechaNacimiento }
-          : a
-      ));
-    } else {
-      // Creación
-      const nuevoAlumno = {
-        id: Date.now(),
+    if (!nombre.trim() || !apellido.trim() || !fechaNacimiento) return;
+
+    try {
+      const alumno = {
+        id: idEditando,
         nombre,
         apellido,
-        fechaNacimiento,
-        sala: "Sala asignada"
+        fechaNacimiento
       };
 
-      setAlumnos([...alumnos, nuevoAlumno]);
-    }
+      if (idEditando !== null) {
+        await editarAlumno(alumno, aula.id);
+      } else {
+        await crearAlumno(alumno, aula.id);
+      }
 
-    setMostrarPanel(false);
-    setNombre("");
-    setApellido("");
-    setFechaNacimiento("");
-    setIdEditando(null);
+      // Volvemos a consultar los alumnos del backend.
+      const datos = await getAlumnos();
+
+      setAlumnos(
+        datos.filter(a => Number(a.aula?.id) === Number(aula.id))
+      );
+
+      setMostrarPanel(false);
+      setNombre("");
+      setApellido("");
+      setFechaNacimiento("");
+      setIdEditando(null);
+
+    } catch (error) {
+      console.error("Error al guardar alumno:", error);
+      setError("No se pudo guardar el alumno.");
+    }
   };
 
-  const eliminarAlumno = (id, nombreCompleto) => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar a "${nombreCompleto}"?`)) {
+  const eliminarAlumno = async (id, nombreCompleto) => {
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar a "${nombreCompleto}"?`)) {
+      return;
+    }
+
+    try {
+      await eliminarAlumnoApi(id);
+
       setAlumnos(alumnos.filter(a => a.id !== id));
+
+    } catch (error) {
+      console.error("Error al eliminar alumno:", error);
+      setError("No se pudo eliminar el alumno.");
     }
   };
 
   function formatearFecha(fecha) {
     if (!fecha) return "Sin fecha";
 
-    const [anio, mes, dia] = fecha.split("-");
+    const [dia, mes, anio] = fecha.split("-");
     return `${dia}/${mes}/${anio}`;
+  }
+
+  function convertirFechaInput(fecha) {
+    if (!fecha) return "";
+
+    const [dia, mes, anio] = fecha.split("-");
+    return `${anio}-${mes}-${dia}`;
   }
 
   return (
@@ -101,52 +154,52 @@ function Alumnos({ aula, onVolver }) {
         {/* LISTADO DESKTOP */}
         <div className="lista-alumnos desktop-alumnos">
 
-            <div className="alumno-grid alumno-header">
-                <span>Alumno</span>
-                <span>Nacimiento</span>
-                <span>Anotaciones</span>
-                <span>Última</span>
-                <span>Acciones</span>
+          <div className="alumno-grid alumno-header">
+            <span>Alumno</span>
+            <span>Nacimiento</span>
+            <span>Anotaciones</span>
+            <span>Última</span>
+            <span>Acciones</span>
+          </div>
+
+          {alumnos.map((alumno) => (
+            <div className="alumno-grid alumno-item" key={alumno.id}>
+              <button className="alumno-nombre" type="button">
+                {alumno.nombre} {alumno.apellido}
+              </button>
+
+              <span>{formatearFecha(alumno.fechaNacimiento) || '-'}</span>
+              <span>{alumno.cantidadAnotaciones ?? 0}</span>
+              <span>{alumno.ultimaAnotacion || '-'}</span>
+
+              <div className="alumno-acciones">
+                <button
+                  className="accion-editar"
+                  onClick={() => abrirPanelEditar(alumno)}
+                >
+                  Editar
+                </button>
+                <p>·</p>
+                <button
+                  className="accion-eliminar"
+                  onClick={() => eliminarAlumno(
+                    alumno.id,
+                    `${alumno.nombre} ${alumno.apellido}`
+                  )}
+                >
+                  Eliminar
+                </button>
+              </div>
+
             </div>
-
-            {alumnos.map((alumno) => (
-                <div className="alumno-grid alumno-item" key={alumno.id}>
-
-                    <button className="alumno-nombre" type="button">
-                        {alumno.nombre} {alumno.apellido}
-                    </button>
-
-                    <span>{formatearFecha(alumno.fechaNacimiento) || '-'}</span>
-                    <span>{alumno.cantidadAnotaciones ?? 0}</span>
-                    <span>{alumno.ultimaAnotacion || '-'}</span>
-
-                    <div className="alumno-acciones">
-                        <button
-                            className="accion-editar"
-                            onClick={() => abrirPanelEditar(alumno)}
-                        >
-                            Editar
-                        </button>
-                        <p>·</p>
-                        <button
-                            className="accion-eliminar"
-                            onClick={() => eliminarAlumno(
-                                alumno.id,
-                                `${alumno.nombre} ${alumno.apellido}`
-                            )}
-                        >
-                            Eliminar
-                        </button>
-                    </div>
-
-                </div>
-            ))}
-
-            {alumnos.length === 0 && (
-                <p className="lista-vacia">
-                    Todavía no hay alumnos en esta aula.
-                </p>
-            )}
+          ))}
+          {cargando && <p>Cargando alumnos...</p>}
+          {error && <p>{error}</p>}
+          {!cargando && alumnos.length === 0 && (
+            <p className="lista-vacia">
+              Todavía no hay alumnos en esta aula.
+            </p>
+          )}
         </div>
 
 
@@ -171,8 +224,9 @@ function Alumnos({ aula, onVolver }) {
               </span>
             </button>
           ))}
-
-          {alumnos.length === 0 && (
+          {cargando && <p>Cargando alumnos...</p>}
+          {error && <p>{error}</p>}
+          {!cargando && alumnos.length === 0 && (
             <p className="lista-vacia">
               Todavía no hay alumnos en esta aula.
             </p>
