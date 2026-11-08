@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/kindernote/api/maestra';
+const API_URL = 'https://kindernote-backend.onrender.com/kindernote/api/maestra';
 
 // Inicio de sesión
 export async function iniciarSesion(datos) {
