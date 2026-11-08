@@ -30,7 +30,7 @@
   padding: 16px 20px 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 20px;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -46,7 +46,6 @@
 .sala-actual {
   display: flex;
   gap: 5px;
-  margin-bottom: 15px;
   color: #5B6B66;
   font-family: 'Lexend-Regular';
   font-size: 14px;
@@ -62,6 +61,39 @@
   color: rgb(27, 59, 51);
 }
 
+.titulo-sala{
+  margin: 0;
+  font-family: 'BricolageGrotesque-Bold',sans-serif;
+  font-size: 34px;
+}
+
+.boton-nuevo-alumno {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font: 500 15px 'Lexend-Regular',sans-serif;
+  background: #2F6B5E;
+  color: #fff;
+  text-decoration: none;
+  border: 0;
+}
+.boton-nuevo-alumno:hover {
+  background-color: #2F5A52;
+}
+
+.header-titulo{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.data-alumnos{
+  font-size: 14px;
+  color: #5B6B66;
+  font-family: 'Lexend-Regular',sans-serif;
+}
 /* LISTA DE ALUMNOS */
 .desktop-alumnos {
   display: none;

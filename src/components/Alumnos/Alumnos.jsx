@@ -68,111 +68,110 @@ function Alumnos({ aula, onVolver }) {
 
   return (
     <div className="alumnos-container">
-        {/* 3. CONTENIDO PRINCIPAL */}
-        <div className="contenido-principal">
-          <div className='sala-actual'>
-            <button className='boton-volver' onClick={onVolver}>
-              Mis aulas / 
-            </button>
-            <p>{aula.nombre}</p>
+      {/* 3. CONTENIDO PRINCIPAL */}
+      <div className="contenido-principal">
+        <div className='sala-actual'>
+          <button className='boton-volver' onClick={onVolver}>
+            Mis aulas / 
+          </button>
+          <p>{aula.nombre}</p>
+        </div>
+        <div className="header-titulo">
+          <div>
+            <p className="titulo-sala">{aula.nombre}</p>
+            <p className='data-alumnos'>{alumnos.length} alumnos</p>
           </div>
-
-          <h2 className="fw-bold text-dark mb-3 fs-3 fs-md-2">Gestión de alumnos</h2>
-
-          {/* Botón "+ Nuevo alumno" adaptable a mobile */}
-          <div className="d-grid d-sm-block mb-4">
-            <button 
-              onClick={abrirPanelCrear}
-              className="btn text-white py-2 px-4 rounded-3 fw-semibold shadow-sm"
-              style={{ backgroundColor: '#1b3b33' }}
-            >
-              + Nuevo alumno
-            </button>
-          </div>
-
-          {/* LISTADO DESKTOP */}
-            <div className="lista-alumnos desktop-alumnos">
-
-                <div className="alumno-grid alumno-header">
-                    <span>Alumno</span>
-                    <span>Nacimiento</span>
-                    <span>Anotaciones</span>
-                    <span>Última</span>
-                    <span>Acciones</span>
-                </div>
-
-                {alumnos.map((alumno) => (
-                    <div className="alumno-grid alumno-item" key={alumno.id}>
-
-                        <button className="alumno-nombre" type="button">
-                            {alumno.nombre} {alumno.apellido}
-                        </button>
-
-                        <span>{alumno.fechaNacimiento || '-'}</span>
-                        <span>{alumno.cantidadAnotaciones ?? 0}</span>
-                        <span>{alumno.ultimaAnotacion || '-'}</span>
-
-                        <div className="alumno-acciones">
-                            <button
-                                className="accion-editar"
-                                onClick={() => abrirPanelEditar(alumno)}
-                            >
-                                Editar
-                            </button>
-                            <p>·</p>
-                            <button
-                                className="accion-eliminar"
-                                onClick={() => eliminarAlumno(
-                                    alumno.id,
-                                    `${alumno.nombre} ${alumno.apellido}`
-                                )}
-                            >
-                                Eliminar
-                            </button>
-                        </div>
-
-                    </div>
-                ))}
-
-                {alumnos.length === 0 && (
-                    <p className="lista-vacia">
-                        Todavía no hay alumnos en esta aula.
-                    </p>
-                )}
-            </div>
-
-
-            {/* LISTADO MOBILE */}
-            <div className="lista-alumnos-mobile">
-
-              {alumnos.map((alumno) => (
-                <button
-                  type="button"
-                  className="alumno-card-mobile"
-                  key={alumno.id}
-                  onClick={() => abrirPanelEditar(alumno)}
-                >
-                  <span className="mobile-alumno-nombre">
-                    {alumno.nombre} {alumno.apellido}
-                  </span>
-
-                  <span className="mobile-alumno-datos">
-                    {alumno.fechaNacimiento || '-'}
-                    <span> · </span>
-                    {alumno.cantidadAnotaciones ?? 0} anotaciones
-                  </span>
-                </button>
-              ))}
-
-              {alumnos.length === 0 && (
-                <p className="lista-vacia">
-                  Todavía no hay alumnos en esta aula.
-                </p>
-              )}
-
-            </div>
+          <button
+            type="button"
+            className="boton-nuevo-alumno"
+            onClick={abrirPanelCrear}
+          >
+            + Agregar alumno
+          </button>
         </div>
 
+        {/* LISTADO DESKTOP */}
+        <div className="lista-alumnos desktop-alumnos">
+
+            <div className="alumno-grid alumno-header">
+                <span>Alumno</span>
+                <span>Nacimiento</span>
+                <span>Anotaciones</span>
+                <span>Última</span>
+                <span>Acciones</span>
+            </div>
+
+            {alumnos.map((alumno) => (
+                <div className="alumno-grid alumno-item" key={alumno.id}>
+
+                    <button className="alumno-nombre" type="button">
+                        {alumno.nombre} {alumno.apellido}
+                    </button>
+
+                    <span>{alumno.fechaNacimiento || '-'}</span>
+                    <span>{alumno.cantidadAnotaciones ?? 0}</span>
+                    <span>{alumno.ultimaAnotacion || '-'}</span>
+
+                    <div className="alumno-acciones">
+                        <button
+                            className="accion-editar"
+                            onClick={() => abrirPanelEditar(alumno)}
+                        >
+                            Editar
+                        </button>
+                        <p>·</p>
+                        <button
+                            className="accion-eliminar"
+                            onClick={() => eliminarAlumno(
+                                alumno.id,
+                                `${alumno.nombre} ${alumno.apellido}`
+                            )}
+                        >
+                            Eliminar
+                        </button>
+                    </div>
+
+                </div>
+            ))}
+
+            {alumnos.length === 0 && (
+                <p className="lista-vacia">
+                    Todavía no hay alumnos en esta aula.
+                </p>
+            )}
+        </div>
+
+
+        {/* LISTADO MOBILE */}
+        <div className="lista-alumnos-mobile">
+
+          {alumnos.map((alumno) => (
+            <button
+              type="button"
+              className="alumno-card-mobile"
+              key={alumno.id}
+              onClick={() => abrirPanelEditar(alumno)}
+            >
+              <span className="mobile-alumno-nombre">
+                {alumno.nombre} {alumno.apellido}
+              </span>
+
+              <span className="mobile-alumno-datos">
+                {alumno.fechaNacimiento || '-'}
+                <span> · </span>
+                {alumno.cantidadAnotaciones ?? 0} anotaciones
+              </span>
+            </button>
+          ))}
+
+          {alumnos.length === 0 && (
+            <p className="lista-vacia">
+              Todavía no hay alumnos en esta aula.
+            </p>
+          )}
+
+        </div>
+      </div>
       {/* 5. PANEL LATERAL / BOTTOM SHEET (Crear o Editar Alumno) */}
       {mostrarPanel && (
         <div className="bg-white shadow-lg p-4 rounded-top-4 rounded-md-0 panel-lateral-custom">
