@@ -1,5 +1,5 @@
-//const API_URL = 'https://kindernote-backend.onrender.com/kindernote/api';
-const API_URL = 'http://localhost:8080/kindernote/api';
+const API_URL = 'https://kindernote-backend.onrender.com/kindernote/api';
+//const API_URL = 'http://localhost:8080/kindernote/api';
 
 export async function generarBorrador(datos) {
     const respuesta = await fetch(
