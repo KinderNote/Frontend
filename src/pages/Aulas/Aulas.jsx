@@ -86,7 +86,7 @@ function Aulas() {
     <div className="aulas-container" style={{ backgroundColor: '#eef1ee' }}>
 
       {aulaSeleccionada ? (
-        <Alumnos aula={aulaSeleccionada} nombreAula={aulaSeleccionada.nombre} onVolver={() => setAulaSeleccionada(null)} />
+        <Alumnos aula={aulaSeleccionada} nombreAula={aulaSeleccionada.nombre} maestraId={usuarioId} onVolver={() => setAulaSeleccionada(null)} />
       ) : (
         <div className="aulas-contenido">
           <div className="p-3 p-md-5 pb-5">

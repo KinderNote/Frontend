@@ -9,9 +9,9 @@
     .nav-container{
         margin-top: auto;
         font-family: 'Lexend-Regular',system-ui,sans-serif;
-        height: 56px;
     }
     .nav-mobile{
+        height: 70px;
         width: 100%;
         display: flex;
         justify-content: space-around;
@@ -38,10 +38,11 @@
 }
 
 @media (min-width: 768px) {         /*DESKTOP*/
-    .nav-container{
-        height: 100vh;
+    .nav-container {
+        height: 100%;
         width: 232px;
-        font-family: 'Lexend-Regular',system-ui,sans-serif;
+        min-width: 232px;
+        font-family: 'Lexend-Regular', system-ui, sans-serif;
     }
     .nav-desktop{
         min-height: min-content;
