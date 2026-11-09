@@ -44,7 +44,7 @@ export const descargarDocxInforme = async (alumno, areas) => {
             rows: [
               crearFilaTabla("Nombre y apellido:", alumno.nombre),
               crearFilaTabla("Sala:", alumno.aula),
-              crearFilaTabla("Edad:", alumno.edad),
+              crearFilaTabla("Edad:", alumno.edad.toString()),
               crearFilaTabla("Docente:", alumno.docente),
               crearFilaTabla("Fecha del informe:", alumno.fechaInforme),
             ],
