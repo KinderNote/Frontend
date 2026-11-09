@@ -12,14 +12,6 @@
     overflow-y: auto;
 }
 @media (min-width: 768px) {         /*DESKTOP*/
-<<<<<<< HEAD
-    .aulas-container{
-        height: 100vh;
-        min-height: 0;
-        flex-direction:row-reverse;
-        justify-content: flex-end;
-        overflow: hidden;
-=======
     .aulas-container {
         height: 100vh;
         flex-direction: row-reverse;
@@ -30,6 +22,5 @@
         flex: 1;
         min-width: 0;
         overflow-y: auto;
->>>>>>> feature/pantalla-alumnos
     }
 }

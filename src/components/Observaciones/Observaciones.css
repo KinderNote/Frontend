@@ -26,6 +26,7 @@
     color: #5B6B66;
     font-family: 'Lexend-Regular';
     display: flex;
+    gap: 10px;
 }
 .observaciones .header .info-alumno .generar-informe{
     font-size: 14px;
@@ -263,6 +264,7 @@
     }
     .observaciones .header .info-alumno .data{
         font-size: 14px;
+        gap: 10px;
     }
     .observaciones .header .info-alumno .generar-informe{
         display: inline-flex;

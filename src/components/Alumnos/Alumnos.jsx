@@ -6,8 +6,9 @@ import {
   editarAlumno,
   eliminarAlumno as eliminarAlumnoApi
 } from '../../services/alumnoService';
+import Observaciones from '../Observaciones/Observaciones';
 
-function Alumnos({ aula, onVolver }) {
+function Alumnos({ aula, onVolver, maestraId }) {
   const [alumnos, setAlumnos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
@@ -17,6 +18,8 @@ function Alumnos({ aula, onVolver }) {
   const [apellido, setApellido] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [idEditando, setIdEditando] = useState(null);
+
+  const [alumnoSeleccionado, setAlumnoSeleccionado] = useState(null);
 
   useEffect(() => {
     async function cargarAlumnos() {
@@ -127,6 +130,19 @@ function Alumnos({ aula, onVolver }) {
     return `${anio}-${mes}-${dia}`;
   }
 
+  if (alumnoSeleccionado) {
+    return (
+      <Observaciones
+        alumnoId={alumnoSeleccionado.id}
+        maestraId={maestraId}
+        aula={aula}
+        alumno={alumnoSeleccionado}
+        onVolverAula={() => setAlumnoSeleccionado(null)}
+        onVolverAulas={onVolver}
+      />
+    );
+  }
+
   return (
     <div className="alumnos-container">
       {/* 3. CONTENIDO PRINCIPAL */}
@@ -164,7 +180,11 @@ function Alumnos({ aula, onVolver }) {
 
           {alumnos.map((alumno) => (
             <div className="alumno-grid alumno-item" key={alumno.id}>
-              <button className="alumno-nombre" type="button">
+              <button
+                className="alumno-nombre"
+                type="button"
+                onClick={() => setAlumnoSeleccionado(alumno)}
+              >
                 {alumno.nombre} {alumno.apellido}
               </button>
 
@@ -211,7 +231,7 @@ function Alumnos({ aula, onVolver }) {
               type="button"
               className="alumno-card-mobile"
               key={alumno.id}
-              onClick={() => abrirPanelEditar(alumno)}
+              onClick={() => setAlumnoSeleccionado(alumno)}
             >
               <span className="mobile-alumno-nombre">
                 {alumno.nombre} {alumno.apellido}

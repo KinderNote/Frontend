@@ -3,7 +3,6 @@ import './Aulas.css';
 import Nav from '../../components/Nav/Nav';
 import Alumnos from '../../components/Alumnos/Alumnos';
 import { getAulasPorMaestra, crearAula, editarAula as editarAulaApi, eliminarAula } from '../../services/aulaService';
-import Observaciones from '../../components/Observaciones/Observaciones';
 
 function Aulas() {
   const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -86,18 +85,11 @@ function Aulas() {
   return (
     <div className="aulas-container" style={{ backgroundColor: '#eef1ee' }}>
 
-<<<<<<< HEAD
-
-      {/* saco pa probar 
-      <div className="aulas-contenido">
-        <div className="p-3 p-md-5 pb-5">
-=======
       {aulaSeleccionada ? (
-        <Alumnos aula={aulaSeleccionada} nombreAula={aulaSeleccionada.nombre} onVolver={() => setAulaSeleccionada(null)} />
+        <Alumnos aula={aulaSeleccionada} nombreAula={aulaSeleccionada.nombre} maestraId={usuarioId} onVolver={() => setAulaSeleccionada(null)} />
       ) : (
         <div className="aulas-contenido">
           <div className="p-3 p-md-5 pb-5">
->>>>>>> feature/pantalla-alumnos
 
             <h2 className="fw-bold text-dark mb-3 fs-3 fs-md-2">Mis aulas</h2>
 
@@ -117,16 +109,6 @@ function Aulas() {
               <p className="text-muted small">Todavía no tenés aulas. Creá la primera.</p>
             )}
 
-<<<<<<< HEAD
-          <div className="row g-3">
-            {aulas.map((aula) => (
-              <div className="col-12 col-md-6 col-lg-4" key={aula.id}>
-                <div className="card border border-secondary border-opacity-25 shadow-sm rounded-4 p-3 bg-white">
-                  <div className="card-body p-1">
-                    <h5 className="card-title fw-bold text-dark mb-1">{aula.nombre}</h5>
-                    
-                    <hr className="my-2 opacity-10" />
-=======
             {/* LISTADO DE TARJETAS */}
             <div className="row g-3">
               {aulas.map((aula) => (
@@ -136,7 +118,6 @@ function Aulas() {
                       <h5 className="card-title fw-bold text-dark mb-1">{aula.nombre}</h5>
                       
                       <hr className="my-2 opacity-10" />
->>>>>>> feature/pantalla-alumnos
 
                       <div className="d-flex gap-3 pt-1">
                         <button 
@@ -166,13 +147,7 @@ function Aulas() {
 
           </div>
         </div>
-<<<<<<< HEAD
-      </div>
-      */}
-      <Observaciones />
-=======
       )}
->>>>>>> feature/pantalla-alumnos
       <Nav />
 
       {/* 5. PANELES CONDICIONALES (SEPARADOS PARA EVITAR CONFLICTOS) */}

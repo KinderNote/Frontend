@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight} from 'lucide-react';
+import { ChevronRight} from 'lucide-react';
 import './Observaciones.css';
 import { getEtiquetas, getObservacionesPorAlumno} from '../../services/observacionesService';
 import {
@@ -9,7 +9,7 @@ import {
     eliminarObservacion
 } from '../../services/observacionesService';
 
-function Observaciones({ alumnoId }) {
+function Observaciones({alumnoId,maestraId,aula,alumno,onVolverAula,onVolverAulas}) {
     const navigate = useNavigate();
     
     const [nota, setNota] = useState('');
@@ -53,23 +53,24 @@ function Observaciones({ alumnoId }) {
 
     //ETIQUETAS
     useEffect(() => {
+        if (!maestraId) return;
+
         async function cargarEtiquetas() {
             try {
-                const datos = await getEtiquetas();
+                const datos = await getEtiquetas(maestraId);
                 setEtiquetas(datos);
             } catch (error) {
                 console.error(error);
-            } finally {
-                //setCargandoEtiquetas(false);
             }
         }
+
         cargarEtiquetas();
-    }, []);
+    }, [maestraId]);
     
-    const observacionesFiltradas = observaciones.filter((observacion) => {
+    const observacionesFiltradas = observaciones.filter(observacion => {
         if (etiquetaFiltro === null) return true;
 
-        return Number(observacion.etiquetaId) === Number(etiquetaFiltro);
+        return observacion.etiquetaClave === etiquetaFiltro;
     });
 
     function limpiarFormulario() {
@@ -91,8 +92,8 @@ function Observaciones({ alumnoId }) {
 
     function cargarObservacionParaEditar(observacion) {
         setNota(observacion.nota);
-        setFecha(observacion.fecha);
-        setEtiquetaSeleccionada(String(observacion.etiquetaId));
+        setFecha(convertirFechaInput(observacion.fecha));
+        setEtiquetaSeleccionada(observacion.etiquetaClave);
 
         setObservacionEditando(observacion);
         setEdicionAbierta(true);
@@ -105,8 +106,9 @@ function Observaciones({ alumnoId }) {
         }
 
         const etiqueta = etiquetas.find(
-            e => Number(e.id) === Number(etiquetaSeleccionada)
+            e => e.clave === etiquetaSeleccionada
         );
+
         if (!etiqueta) {
             alert('Seleccioná una etiqueta válida.');
             return;
@@ -115,8 +117,11 @@ function Observaciones({ alumnoId }) {
         const datos = {
             alumnoId: Number(alumnoId),
             nota: nota.trim(),
-            fecha: fecha,
-            etiquetaId: Number(etiquetaSeleccionada),
+            fecha,
+
+            etiquetaTipo: etiqueta.tipo,
+            etiquetaId: etiqueta.id,
+            etiquetaValor: etiqueta.valor,
             etiqueta: etiqueta.nombre
         };
 
@@ -124,30 +129,20 @@ function Observaciones({ alumnoId }) {
             setGuardando(true);
 
             if (observacionEditando) {
-                // Modificar observación existente
-                const actualizada = await editarObservacion(
-                    observacionEditando.id,
-                    datos
-                );
-
-                setObservaciones(prev =>
-                    prev.map(obs =>
-                        obs.id === actualizada.id ? actualizada : obs
-                    )
-                );
-
+                await editarObservacion(observacionEditando.id, datos);
             } else {
-                // Crear observación nueva
-                const nueva = await guardarObservacion(datos);
-                setObservaciones(prev => [...prev, nueva]);
+                await guardarObservacion(datos);
             }
+
+            // Volvemos a consultar para mantener los datos normalizados.
+            const actualizadas = await getObservacionesPorAlumno(alumnoId);
+            setObservaciones(actualizadas);
 
             cerrarEdicion();
 
         } catch (error) {
             console.error(error);
             alert('No se pudo guardar la observación.');
-
         } finally {
             setGuardando(false);
         }
@@ -173,16 +168,35 @@ function Observaciones({ alumnoId }) {
         }
     }
 
+    function convertirFechaInput(fecha) {
+        if (!fecha) return '';
+
+        const [dia, mes, anio] = fecha.split('-');
+        return `${anio}-${mes}-${dia}`;
+    }
+
     return (
         <div className='observaciones'>
             <div className='header'>
-                <button className='volver-aula'><ChevronLeft size={'15px'}/>Nombreaula</button>
-                <p className='id-alumno'>Benicio</p>
+                <div className='sala-actual'>
+                    <button className='boton-volver' onClick={onVolverAulas}>
+                        Mis aulas /
+                    </button>
+
+                    <button className='boton-volver' onClick={onVolverAula}>
+                        {aula.nombre} /
+                    </button>
+
+                    <p>{alumno.nombre} {alumno.apellido}</p>
+                    </div>
+                <p className='id-alumno'>{alumno.nombre} {alumno.apellido}</p>
                 <div className='info-alumno'>
                     <div className='data'>
-                        <p className='id-aula'>Nombreaula</p>
-                        <p className='fecha-nacimiento'>10/10/10</p>
-                        <p className='cant-observaciones'>anotaciones</p>
+                        <p className='id-aula'>{aula.nombre}</p>
+                        <p>·</p>
+                        <p className='fecha-nacimiento'>{alumno.fechaNacimiento}</p>
+                        <p>·</p>
+                        <p className='cant-observaciones'>{observaciones.length} observaciones</p>
                     </div>
                     <button className='generar-informe' onClick={() => navigate('/borradores')} >Generar informe<ChevronRight size={'15px'}/></button>
                 </div>
@@ -195,9 +209,9 @@ function Observaciones({ alumnoId }) {
                             {observacionEditando ? 'Editar observación' : 'Nueva observación'}
                         </div>
                         <div className='info'>
-                            <p className='alumno'>Benicio</p>
+                            <p className='alumno'>{alumno.nombre} {alumno.apellido}</p>
                             <p>·</p>
-                            <p className='sala'>Sala autista</p>
+                            <p className='sala'>{aula.nombre}</p>
                         </div>
                     </header>
                     <div className="seleccion">
@@ -223,7 +237,6 @@ function Observaciones({ alumnoId }) {
                         />
                     </div>
                     <div className="seleccion">
-                        <label className ="seleccion-title" htmlFor="etiqueta">Etiqueta</label>
                         <select
                             className="input"
                             id="etiqueta"
@@ -231,13 +244,29 @@ function Observaciones({ alumnoId }) {
                             onChange={(e) => setEtiquetaSeleccionada(e.target.value)}
                         >
                             <option value="">Seleccioná una etiqueta</option>
-                            {etiquetas.map((etiqueta) => (
-                                <option key={etiqueta.id} value={etiqueta.id}>
-                                    {etiqueta.nombre}
-                                </option>
-                            ))}
+
+                            <optgroup label="Etiquetas predeterminadas">
+                                {etiquetas
+                                    .filter(e => e.tipo === 'PREDETERMINADA')
+                                    .map(etiqueta => (
+                                        <option key={etiqueta.clave} value={etiqueta.clave}>
+                                            {etiqueta.nombre}
+                                        </option>
+                                    ))}
+                            </optgroup>
+
+                            <optgroup label="Mis etiquetas">
+                                {etiquetas
+                                    .filter(e => e.tipo === 'PERSONALIZADA')
+                                    .map(etiqueta => (
+                                        <option key={etiqueta.clave} value={etiqueta.clave}>
+                                            {etiqueta.nombre}
+                                        </option>
+                                    ))}
+                            </optgroup>
                         </select>
                     </div>
+
                     <button
                         className='guardar'
                         onClick={handleGuardar}
@@ -254,16 +283,20 @@ function Observaciones({ alumnoId }) {
                         >
                             Todas
                         </button>
-                            {etiquetas.map((etiqueta) => (
+
+                        {etiquetas.map(etiqueta => (
                             <button
-                                key={etiqueta.id}
-                                className={`etiqueta-filtro ${etiquetaFiltro === etiqueta.id ? 'activa' : ''}`}
-                                onClick={() => setEtiquetaFiltro(etiqueta.id)}
+                                key={etiqueta.clave}
+                                className={`etiqueta-filtro ${
+                                    etiquetaFiltro === etiqueta.clave ? 'activa' : ''
+                                }`}
+                                onClick={() => setEtiquetaFiltro(etiqueta.clave)}
                             >
                                 {etiqueta.nombre}
                             </button>
                         ))}
                     </div>
+
                     <div className='tarjetas'>
                         {cargandoObservaciones && <p>Cargando observaciones...</p>}
                         {errorObservaciones && <p>{errorObservaciones}</p>}
