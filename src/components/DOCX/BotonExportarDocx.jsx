@@ -1,4 +1,5 @@
 import { descargarDocxInforme } from './Informe';
+import { textosToItems } from '../../services/informeService';
 
 export const BotonExportarDocx = ({alumno, maestra, aulaNombre, informe }) => {
   const manejarDescargaDocx = () => {
@@ -10,16 +11,7 @@ export const BotonExportarDocx = ({alumno, maestra, aulaNombre, informe }) => {
       fechaInforme: informe.fechaCreacion
     };
 
-    const listaAreas = []
-
-    Object.keys(informe.textoPorArea).forEach((area) => {
-        listaAreas.push(
-        {
-            "area": area,
-            "texto": informe.textoPorArea[area]
-        }
-        )
-    })
+    const listaAreas = textosToItems(informe.textoPorArea)
 
     descargarDocxInforme(alumnoInfo, listaAreas);
   };
@@ -28,16 +20,17 @@ export const BotonExportarDocx = ({alumno, maestra, aulaNombre, informe }) => {
     <button 
       onClick={manejarDescargaDocx}
       style={{
-        padding: '10px 20px',
+        padding: '0 18px',
+        height: '48px',
         backgroundColor: '#2B6CB0',
         color: '#FFF',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '12px',
         fontWeight: 'bold',
         cursor: 'pointer'
       }}
     >
-      Descargar en DOCX (Word)
+      Exportar DOCX
     </button>
   );
 }
