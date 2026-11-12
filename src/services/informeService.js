@@ -107,3 +107,25 @@ export async function getAulas() {
 
     return await respuesta.json();
 }
+
+export function textosToItems(textos) {
+    const listaAreas = []
+    Object.keys(textos).forEach((texto) => {
+        listaAreas.push(
+            {
+                "area": texto,
+                "texto": textos[texto]
+            }
+        )
+    })
+
+    return listaAreas;
+}
+
+export function itemsToTextos(items) {
+    const textos = {}
+    items.forEach((item) => {
+        textos[item.area] = item.texto
+    })
+    return textos;
+}
