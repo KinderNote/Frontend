@@ -4,10 +4,11 @@ import { ChevronLeft } from 'lucide-react';
 import Nav from '../../components/Nav/Nav';
 import {
     getAlumnosPorAula,
-    getBorradoresPorMaestra,
     generarBorrador,
     guardarBorrador,
-    getBorradoresPorAlumno
+    getBorradoresPorAlumno,
+    textosToItems,
+    itemsToTextos
 } from '../../services/informeService';
 import { getAulasPorMaestra } from '../../services/aulaService';
 import { BotonExportarPdf } from '../../components/PDF/BotonExportarPdf';
@@ -32,6 +33,8 @@ function Borrador() {
     const [borradorActual, setBorradorActual] = useState(null);
     const [abierto, setAbierto] = useState(false);
 
+    const [areas, setAreas] = useState([])
+
     useEffect(() => {
         async function cargarDatos() {
             try {
@@ -46,6 +49,30 @@ function Borrador() {
         }
         cargarDatos();
     }, [usuarioId]);
+
+    useEffect (() => {
+        if (borradorActual) {
+            const textos = textosToItems(JSON.parse(JSON.stringify(borradorActual.textoPorArea)))
+            console.log("textos: ", textos)
+            setAreas(textos);
+            //console.log(itemsToTextos(textos))
+        }
+        else {
+            setAreas([])
+        }
+        
+    }, [borradorActual])
+
+    const manejarTextoCambiado = (index, nuevoTexto) => {
+        setAreas((prevAreas) => {
+            const nuevasAreas = [...prevAreas];
+            nuevasAreas[index] = {
+                ...nuevasAreas[index],
+                texto: nuevoTexto
+            };
+            return nuevasAreas;
+        })
+    }
 
     useEffect(() => {
         async function actualizarBorradores() {
@@ -112,23 +139,15 @@ function Borrador() {
 
         try {
             const datos = {
-                alumnoId: Number(alumnoSeleccion),
+                alumnoId: alumnos[alumnoSeleccion].id,
                 fechaInicio: formatearFecha(fechaDesde),
                 fechaFin: formatearFecha(fechaHasta)
             };
+            console.log("alumnoSeleccion", alumnoSeleccion)
+            console.log("alumno", alumnos[alumnoSeleccion].id)
             const resultado = await generarBorrador(datos);
-
-            const nuevoBorrador = {
-                nombre: alumnoActual.nombre,
-                apellido: alumnoActual.apellido || '',
-                aula: aulaActual.nombre,
-                fechaDesde,
-                fechaHasta,
-                fechaGeneracion: new Date().toLocaleDateString('es-AR'),
-                contenido: resultado
-            };
             
-            setBorradorActual(nuevoBorrador);
+            setBorradorActual(resultado);
             setAbierto(true);
         } catch (error) {
             console.error(error);
@@ -149,21 +168,17 @@ function Borrador() {
 
         try {
             const informe = {
-                texto: borradorActual.contenido,
-                fechaCreacion: formatearFecha(
-                    new Date().toLocaleDateString('en-CA')
-                ),
+                textoPorArea: itemsToTextos(areas),
+                fechaCreacion: borradorActual.fechaCreacion,
                 esBorrador: true,
-                alumno: {
-                    id: Number(alumnoSeleccion)
-                }
+                id: borradorActual.id
             };
-
             await guardarBorrador(informe);
             alert('Borrador guardado correctamente.');
 
-            const informesActualizados = await getBorradoresPorMaestra();
-            setBorradores(informesActualizados);
+            setBorradorActual(informe)
+            //const informesActualizados = await getBorradoresPorMaestra();
+            //setBorradores(informesActualizados);
         } catch (error) {
             console.error(error);
             alert('No se pudo guardar el borrador.');
@@ -242,11 +257,12 @@ function Borrador() {
                                             ...borrador,
                                             nombre: alumnoBorrador?.nombre || 'Alumno',
                                             apellido: alumnoBorrador?.apellido || '',
-                                            contenido: borrador.texto || "Fix: Placeholder",
+                                            
                                             fechaGeneracion: borrador.fechaCreacion,
                                             textoPorArea: borrador.textoPorArea
                                         });
                                         setAbierto(true);
+                                        //cambiarTextos(borradorActual)
                                     }}
                                 >
                                     <span className="info-nombre">
@@ -274,12 +290,58 @@ function Borrador() {
                     <button className="volver-button" type="button" onClick={() => setAbierto(false)}><ChevronLeft/>Informes</button>
                     <div className='guardar-info'>
                         <p>Borrador generado</p>
-                        <p className='info-nombre'>{borradorActual?.nombre} {borradorActual?.apellido}</p>
-                        <p className='info-fecha'>{borradorActual?.fechaGeneracion}</p>
+                        <p className='info-nombre'>{alumnos[alumnoSeleccion - 1]?.nombre} {alumnos[alumnoSeleccion - 1]?.apellido}</p>
+                        <p className='info-fecha'>{borradorActual?.fechaCreacion}</p>
                     </div>
                     <div className='texto-generado'>
                         <div style={{ whiteSpace: 'pre-wrap' }}>
-                            {borradorActual?.contenido}
+                            <p style={{ color: '#666', fontSize: '14px', font: '500 14px Lexend-Regular, sans-serif' }}>
+                                Modifique las observaciones de cada área según sea necesario antes de exportar.
+                            </p>
+
+                            {areas.map((item, index) => (
+                                <div 
+                                    key={index} 
+                                    style={{ 
+                                        marginBottom: '20px', 
+                                        padding: '15px', 
+                                        border: '1px solid #e2f0e3', 
+                                        borderRadius: '8px',
+                                        backgroundColor: '#f7fcf9' 
+                                    }}
+                                >
+
+                                    <label style={{ 
+                                        display: 'block', 
+                                        fontWeight: 'bold', 
+                                        color: '#1F5B37', 
+                                        marginBottom: '8px',
+                                        textTransform: 'uppercase',
+                                        fontSize: '13px',
+                                        font: '500 15px Lexend-Regular, sans-serif'
+                                    }}>
+                                        {item.area}
+                                    </label>
+
+                                    <textarea
+                                        value={item.texto}
+                                        onChange={(e) => manejarTextoCambiado(index, e.target.value)}
+                                        rows={5}
+                                        style={{
+                                        width: '100%',
+                                        padding: '10px',
+                                        fontSize: '14px',
+                                        borderRadius: '4px',
+                                        border: '1px solid #CBD5E0',
+                                        fontFamily: 'inherit',
+                                        lineHeight: '1.5',
+                                        resize: 'vertical',
+                                        boxSizing: 'border-box',
+                                        font: '500 14px Lexend-Regular, sans-serif'
+                                        }}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>

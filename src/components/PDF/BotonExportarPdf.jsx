@@ -1,5 +1,6 @@
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { InformePdfDocument } from './Informe';
+import { textosToItems } from '../../services/informeService';
 
 export const BotonExportarPdf = ({alumno, maestra, aulaNombre, informe }) => {
   
@@ -11,16 +12,7 @@ export const BotonExportarPdf = ({alumno, maestra, aulaNombre, informe }) => {
     fechaInforme: informe.fechaCreacion
   };
 
-  const listaAreas = []
-
-  Object.keys(informe.textoPorArea).forEach((area) => {
-    listaAreas.push(
-      {
-        "area": area,
-        "texto": informe.textoPorArea[area]
-      }
-    )
-  })
+  const listaAreas = textosToItems(informe.textoPorArea)
 
   return (
     <div>
@@ -32,15 +24,14 @@ export const BotonExportarPdf = ({alumno, maestra, aulaNombre, informe }) => {
           <button 
             disabled={loading}
             style={{
-              width: 'max-content',
-              height: '48px',
-              borderRadius: '12px',
               padding: '0 18px',
-              margin: '0 auto',
-              font: '500 15px \'Lexend-Regular\',sans-serif',
-              flex: '1',
-              background: '#C98A12',
-              color: '#1F2A2E'
+              height: '48px',
+              backgroundColor: '#A00B00',
+              color: '#FFF',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+              cursor: 'pointer'
             }}
           >
             {loading ? 'Generando PDF...' : 'Exportar PDF'}
