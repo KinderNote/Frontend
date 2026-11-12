@@ -48,6 +48,21 @@ export async function getBorradoresPorMaestra(maestraId) {
     return await respuesta.json();
 }
 
+export async function getBorradoresPorAlumno(alumnoId) {
+    const respuesta = await fetch(
+        `${API_URL}/informe/alumnoId/${alumnoId}`,
+        {
+            method: 'GET'
+        }
+    );
+
+    if (!respuesta.ok) {
+        throw new Error('No se pudieron obtener los borradores.');
+    }
+
+    return await respuesta.json();
+}
+
 export async function guardarBorrador(borrador) {
     const respuesta = await fetch(`${API_URL}/informe`, {
         method: 'POST',
@@ -61,6 +76,16 @@ export async function guardarBorrador(borrador) {
         throw new Error('No se pudo guardar el borrador.');
     }
     return await respuesta.text();
+}
+
+export async function getAlumnosPorAula(aulaId) {
+    const respuesta = await fetch(`${API_URL}/alumno/getAllByAula/${aulaId}`);
+
+    if (!respuesta.ok) {
+        throw new Error('No se pudieron obtener los alumnos.');
+    }
+
+    return await respuesta.json();
 }
 
 export async function getAlumnos() {

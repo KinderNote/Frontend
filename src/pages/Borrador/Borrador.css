@@ -90,6 +90,19 @@
     background: #C98A12;
     color: #1F2A2E;
 }
+.boton-exportar{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 18px;
+    border-radius: 10px;
+    font: 500 15px 'Lexend-SemiBold',sans-serif;
+    text-decoration: none;
+    border: 0;
+    background: #5B6B66;
+    color: #1F2A2E;
+}
 .guardados-container {
     flex: 1;
     min-height: 0;

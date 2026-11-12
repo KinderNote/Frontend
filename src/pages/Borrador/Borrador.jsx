@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import './Borrador.css';
-import { ChevronLeft} from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import Nav from '../../components/Nav/Nav';
 import {
-    getAlumnos,
-    getAulas,
-    getBorradoresPorMaestra,
+    getAlumnosPorAula,
     generarBorrador,
-    guardarBorrador
+    guardarBorrador,
+    getBorradoresPorAlumno,
+    textosToItems,
+    itemsToTextos
 } from '../../services/informeService';
+import { getAulasPorMaestra } from '../../services/aulaService';
+import { BotonExportarPdf } from '../../components/PDF/BotonExportarPdf';
+import { BotonExportarDocx } from '../../components/DOCX/BotonExportarDocx';
 
 function Borrador() {
     const usuario = JSON.parse(localStorage.getItem('usuario'));
@@ -18,7 +22,7 @@ function Borrador() {
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState('');
     const [aulas, setAulas] = useState([]);
-    const [alumno, setAlumno] = useState([]);
+    const [alumnos, setAlumnos] = useState([]);
 
     const [aulaSeleccion, setAulaSeleccion] = useState('');
     const [alumnoSeleccion, setAlumnoSeleccion] = useState('');
@@ -26,39 +30,60 @@ function Borrador() {
     const [fechaDesde, setFechaDesde] = useState('');
     const [fechaHasta, setFechaHasta] = useState('');
 
-    const [borradorActual, setBorradorActual] = useState(null)
-    
+    const [borradorActual, setBorradorActual] = useState(null);
     const [abierto, setAbierto] = useState(false);
+
+    const [areas, setAreas] = useState([])
 
     useEffect(() => {
         async function cargarDatos() {
             try {
-                const [datosAlumnos, datosAulas] = await Promise.all([
-                    getAlumnos(),
-                    getAulas()
+                const [datosAulas] = await Promise.all([
+                    getAulasPorMaestra(usuarioId)
                 ]);
-
-                setAlumno(datosAlumnos);
                 setAulas(datosAulas);
             } catch (error) {
-                console.error('Error al cargar alumnos y aulas:', error);
+                console.error('Error al cargar aulas:', error);
                 setError(error.message);
             }
         }
         cargarDatos();
-    }, []);
+    }, [usuarioId]);
+
+    useEffect (() => {
+        if (borradorActual) {
+            const textos = textosToItems(JSON.parse(JSON.stringify(borradorActual.textoPorArea)))
+            console.log("textos: ", textos)
+            setAreas(textos);
+            //console.log(itemsToTextos(textos))
+        }
+        else {
+            setAreas([])
+        }
+        
+    }, [borradorActual])
+
+    const manejarTextoCambiado = (index, nuevoTexto) => {
+        setAreas((prevAreas) => {
+            const nuevasAreas = [...prevAreas];
+            nuevasAreas[index] = {
+                ...nuevasAreas[index],
+                texto: nuevoTexto
+            };
+            return nuevasAreas;
+        })
+    }
 
     useEffect(() => {
-        async function cargarBorradores() {
+        async function actualizarBorradores() {
+            setBorradorActual(null);
+            setBorradores([]);
             try {
-                if (!usuarioId) {
-                    throw new Error('No se encontró la maestra de la sesión.');
+                if (alumnoSeleccion !== "") {
+                    const datos = await getBorradoresPorAlumno(alumnoSeleccion);
+                    console.log('Primer borrador:', datos[0]);
+                    setBorradores(datos);
                 }
-
-                const datos = await getBorradoresPorMaestra(usuarioId);
-                //console.log('Borradores recibidos:', datos);
-                //console.log('Primer borrador:', datos[0]);
-                setBorradores(datos);
             } catch (error) {
                 console.error(error);
                 setError(error.message);
@@ -66,8 +91,28 @@ function Borrador() {
                 setCargando(false);
             }
         }
-        cargarBorradores();
-    }, [usuarioId]);
+        actualizarBorradores();
+    }, [alumnoSeleccion]);
+
+    useEffect(() => {
+        async function actualizarAlumnos() {
+            setBorradorActual(null);
+            setBorradores([]);
+            setAlumnoSeleccion('');
+            try {
+                if (aulaSeleccion === "") {
+                    setAlumnos([]);
+                } else {
+                    const datosAlumnos = await getAlumnosPorAula(aulaSeleccion);
+                    setAlumnos(datosAlumnos);
+                }
+            } catch (error) {
+                console.error(error);
+                setError(error.message);
+            }
+        }
+        actualizarAlumnos();
+    }, [aulaSeleccion]);
 
     async function solicitarBorrador() {
         if (!aulaSeleccion || !alumnoSeleccion || !fechaDesde || !fechaHasta) {
@@ -80,10 +125,9 @@ function Borrador() {
             return;
         }
 
-        const alumnoActual = alumno.find(
+        const alumnoActual = alumnos.find(
             (a) => String(a.id) === String(alumnoSeleccion)
         );
-
         const aulaActual = aulas.find(
             (a) => String(a.id) === String(aulaSeleccion)
         );
@@ -95,26 +139,16 @@ function Borrador() {
 
         try {
             const datos = {
-                alumnoId: Number(alumnoSeleccion),
+                alumnoId: alumnos[alumnoSeleccion].id,
                 fechaInicio: formatearFecha(fechaDesde),
                 fechaFin: formatearFecha(fechaHasta)
             };
-            //console.log('Datos enviados al backend:', datos);
+            console.log("alumnoSeleccion", alumnoSeleccion)
+            console.log("alumno", alumnos[alumnoSeleccion].id)
             const resultado = await generarBorrador(datos);
-
-            const nuevoBorrador = {
-                nombre: alumnoActual.nombre,
-                apellido: alumnoActual.apellido || '',
-                aula: aulaActual.nombre,
-                fechaDesde,
-                fechaHasta,
-                fechaGeneracion: new Date().toLocaleDateString('es-AR'),
-                contenido: resultado
-            };
             
-            setBorradorActual(nuevoBorrador);
+            setBorradorActual(resultado);
             setAbierto(true);
-
         } catch (error) {
             console.error(error);
             alert(error.message);
@@ -134,29 +168,32 @@ function Borrador() {
 
         try {
             const informe = {
-                texto: borradorActual.contenido,
-                fechaCreacion: formatearFecha(
-                    new Date().toLocaleDateString('en-CA')
-                ),
+                textoPorArea: itemsToTextos(areas),
+                fechaCreacion: borradorActual.fechaCreacion,
                 esBorrador: true,
-                alumno: {
-                    id: Number(alumnoSeleccion)
-                }
+                id: borradorActual.id
             };
-
             await guardarBorrador(informe);
-
             alert('Borrador guardado correctamente.');
 
-            const informesActualizados = await getBorradoresPorMaestra();
-            setBorradores(informesActualizados);
+            setBorradorActual(informe)
+            //const informesActualizados = await getBorradoresPorMaestra();
+            //setBorradores(informesActualizados);
         } catch (error) {
             console.error(error);
             alert('No se pudo guardar el borrador.');
         }
     }
 
-    return(
+    // Buscamos de forma segura al alumno seleccionado actualmente
+    const alumnoSeleccionadoObj = alumnos.find(
+        (a) => String(a.id) === String(alumnoSeleccion)
+    );
+    const aulaSeleccionadaObj = aulas.find(
+        (a) => String(a.id) === String(aulaSeleccion)
+    );
+
+    return (
         <div className='borrador'>
             <div className={`principal ${abierto ? '' : 'abierto'}`}>
                 <div className='borrador-container'>
@@ -164,24 +201,25 @@ function Borrador() {
                     <p className='borrador-title-desktop'>Informe del alumno</p>
 
                     <form className='borrador-form'>
-
                         <div className="seleccion">
-                            <label className ="seleccion-title" htmlFor="aula">Aula</label>
+                            <label className="seleccion-title" htmlFor="aula">Aula</label>
                             <select className="input" id="aula" value={aulaSeleccion} onChange={(e) => setAulaSeleccion(e.target.value)}>
-                                <option value="">Seleccioná un aula</option>{aulas.map((aula) => (<option key={aula.id} value={aula.id}>{aula.nombre}</option>))}
+                                <option value="">Seleccioná un aula</option>
+                                {aulas.map((aula) => (<option key={aula.id} value={aula.id}>{aula.nombre}</option>))}
                             </select>
                         </div>
 
                         <div className="seleccion">
-                            <label className ="seleccion-title" htmlFor="alumno">Alumno</label>
+                            <label className="seleccion-title" htmlFor="alumno">Alumno</label>
                             <select className="input" id="alumno" value={alumnoSeleccion} onChange={(e) => setAlumnoSeleccion(e.target.value)}>
-                                <option value="">Seleccioná un alumno</option>{alumno.map((alumno) => (<option key={alumno.id} value={alumno.id}>{alumno.nombre}</option>))}
+                                <option value="">Seleccioná un alumno</option>
+                                {alumnos.map((alumno) => (<option key={alumno.id} value={alumno.id}>{alumno.nombre}</option>))}
                             </select>
                         </div>
 
                         <div className='seleccion-fechas'>
                             <div className="seleccion">
-                                <label className ="seleccion-title" htmlFor="fechaDesde">Desde</label>
+                                <label className="seleccion-title" htmlFor="fechaDesde">Desde</label>
                                 <input
                                     className="input"
                                     type="date"
@@ -191,7 +229,7 @@ function Borrador() {
                                 />
                             </div>
                             <div className="seleccion">
-                                <label className ="seleccion-title" htmlFor="fechaHasta">Hasta</label>
+                                <label className="seleccion-title" htmlFor="fechaHasta">Hasta</label>
                                 <input
                                     className="input"
                                     type="date"
@@ -207,9 +245,7 @@ function Borrador() {
                     <div className='guardados-container'>
                         <p className='title-guardados'>BORRADORES GUARDADOS</p>
                         {borradores.map((borrador) => {
-                            const alumnoBorrador = alumno.find(
-                                (a) => String(a.id) === String(borrador.alumno?.id)
-                            );
+                            const alumnoBorrador = alumnos.find(a => a.id === borrador.alumno?.id) || alumnoSeleccionadoObj;
 
                             return (
                                 <button
@@ -219,21 +255,21 @@ function Borrador() {
                                     onClick={() => {
                                         setBorradorActual({
                                             ...borrador,
-                                            nombre: alumnoBorrador?.nombre || 'Alumno no encontrado',
+                                            nombre: alumnoBorrador?.nombre || 'Alumno',
                                             apellido: alumnoBorrador?.apellido || '',
-                                            contenido: borrador.texto,
-                                            fechaGeneracion: borrador.fechaCreacion
+                                            
+                                            fechaGeneracion: borrador.fechaCreacion,
+                                            textoPorArea: borrador.textoPorArea
                                         });
-
                                         setAbierto(true);
+                                        //cambiarTextos(borradorActual)
                                     }}
                                 >
                                     <span className="info-nombre">
                                         {alumnoBorrador
                                             ? `${alumnoBorrador.nombre} ${alumnoBorrador.apellido || ''}`
-                                            : 'Alumno no encontrado'}
+                                            : 'Alumno'}
                                     </span>
-
                                     <span className="info-fecha">
                                         {borrador.fechaCreacion}
                                     </span>
@@ -243,7 +279,7 @@ function Borrador() {
                         {cargando && <p>Cargando borradores...</p>}
                         {!cargando && error && <p>{error}</p>}
                         {!cargando && !error && borradores.length === 0 && (
-                        <p>No hay borradores guardados.</p>
+                            <p>No hay borradores guardados.</p>
                         )}
                     </div>
                 </div>
@@ -253,21 +289,85 @@ function Borrador() {
                 <div className={`guardar-container ${abierto ? 'abierto' : ''}`}>
                     <button className="volver-button" type="button" onClick={() => setAbierto(false)}><ChevronLeft/>Informes</button>
                     <div className='guardar-info'>
-                        <p >Borrador generado</p>
-                        <p className='info-nombre'>{borradorActual?.nombre} {borradorActual?.apellido}</p>
-                        <p className='info-fecha'>{borradorActual?.fechaGeneracion}</p>
+                        <p>Borrador generado</p>
+                        <p className='info-nombre'>{alumnos[alumnoSeleccion - 1]?.nombre} {alumnos[alumnoSeleccion - 1]?.apellido}</p>
+                        <p className='info-fecha'>{borradorActual?.fechaCreacion}</p>
                     </div>
                     <div className='texto-generado'>
-                        <text>
-                            {borradorActual?.contenido}
-                        </text>
+                        <div style={{ whiteSpace: 'pre-wrap' }}>
+                            <p style={{ color: '#666', fontSize: '14px', font: '500 14px Lexend-Regular, sans-serif' }}>
+                                Modifique las observaciones de cada área según sea necesario antes de exportar.
+                            </p>
+
+                            {areas.map((item, index) => (
+                                <div 
+                                    key={index} 
+                                    style={{ 
+                                        marginBottom: '20px', 
+                                        padding: '15px', 
+                                        border: '1px solid #e2f0e3', 
+                                        borderRadius: '8px',
+                                        backgroundColor: '#f7fcf9' 
+                                    }}
+                                >
+
+                                    <label style={{ 
+                                        display: 'block', 
+                                        fontWeight: 'bold', 
+                                        color: '#1F5B37', 
+                                        marginBottom: '8px',
+                                        textTransform: 'uppercase',
+                                        fontSize: '13px',
+                                        font: '500 15px Lexend-Regular, sans-serif'
+                                    }}>
+                                        {item.area}
+                                    </label>
+
+                                    <textarea
+                                        value={item.texto}
+                                        onChange={(e) => manejarTextoCambiado(index, e.target.value)}
+                                        rows={5}
+                                        style={{
+                                        width: '100%',
+                                        padding: '10px',
+                                        fontSize: '14px',
+                                        borderRadius: '4px',
+                                        border: '1px solid #CBD5E0',
+                                        fontFamily: 'inherit',
+                                        lineHeight: '1.5',
+                                        resize: 'vertical',
+                                        boxSizing: 'border-box',
+                                        font: '500 14px Lexend-Regular, sans-serif'
+                                        }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <div className={`footer-botones ${abierto ? 'abierto' : ''}`}>
-                    <button className='boton-guardar' type="button"onClick={guardarBorradorActual}>Guardar borrador</button>
+                    <button className='boton-guardar' type="button" onClick={guardarBorradorActual}>Guardar borrador</button>
                     <div className='exportar-borrador'>
-                        <button className='boton-generar' type="button">Exportar PDF</button>
-                        <button className='boton-generar' type="button">Exportar DOCX</button>
+                        {borradorActual && alumnoSeleccionadoObj ? (
+                            <BotonExportarPdf 
+                                alumno={alumnoSeleccionadoObj}
+                                maestra={usuario}
+                                aulaNombre={aulaSeleccionadaObj?.nombre}
+                                informe={borradorActual}
+                            />
+                        ) : (
+                            <button className='boton-exportar' type="button" disabled={true}>Exportar PDF</button>
+                        )}
+                        {borradorActual && alumnoSeleccionadoObj ? (
+                            <BotonExportarDocx 
+                                alumno={alumnoSeleccionadoObj}
+                                maestra={usuario}
+                                aulaNombre={aulaSeleccionadaObj?.nombre}
+                                informe={borradorActual}
+                            />
+                        ) : (
+                            <button className='boton-exportar' type="button" disabled={true}>Exportar DOCX</button>
+                        )}
                     </div>
                 </div>
             </div>
