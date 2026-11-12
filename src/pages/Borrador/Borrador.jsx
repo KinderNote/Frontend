@@ -176,6 +176,7 @@ function Borrador() {
             await guardarBorrador(informe);
             alert('Borrador guardado correctamente.');
 
+            setBorradorActual(informe)
             //const informesActualizados = await getBorradoresPorMaestra();
             //setBorradores(informesActualizados);
         } catch (error) {
@@ -289,13 +290,12 @@ function Borrador() {
                     <button className="volver-button" type="button" onClick={() => setAbierto(false)}><ChevronLeft/>Informes</button>
                     <div className='guardar-info'>
                         <p>Borrador generado</p>
-                        <p className='info-nombre'>{borradorActual?.nombre} {borradorActual?.apellido}</p>
-                        <p className='info-fecha'>{borradorActual?.fechaGeneracion}</p>
+                        <p className='info-nombre'>{alumnos[alumnoSeleccion - 1]?.nombre} {alumnos[alumnoSeleccion - 1]?.apellido}</p>
+                        <p className='info-fecha'>{borradorActual?.fechaCreacion}</p>
                     </div>
                     <div className='texto-generado'>
                         <div style={{ whiteSpace: 'pre-wrap' }}>
-                            <h2>Edición del Borrador de Informe</h2>
-                            <p style={{ color: '#666', fontSize: '14px' }}>
+                            <p style={{ color: '#666', fontSize: '14px', font: '500 14px Lexend-Regular, sans-serif' }}>
                                 Modifique las observaciones de cada área según sea necesario antes de exportar.
                             </p>
 
@@ -305,24 +305,24 @@ function Borrador() {
                                     style={{ 
                                         marginBottom: '20px', 
                                         padding: '15px', 
-                                        border: '1px solid #E2E8F0', 
+                                        border: '1px solid #e2f0e3', 
                                         borderRadius: '8px',
-                                        backgroundColor: '#F7FAFC' 
+                                        backgroundColor: '#f7fcf9' 
                                     }}
-                                    >
-                                    {/* Título del Área (No editable) */}
+                                >
+
                                     <label style={{ 
                                         display: 'block', 
                                         fontWeight: 'bold', 
-                                        color: '#2B6CB0', 
+                                        color: '#1F5B37', 
                                         marginBottom: '8px',
                                         textTransform: 'uppercase',
-                                        fontSize: '13px'
+                                        fontSize: '13px',
+                                        font: '500 15px Lexend-Regular, sans-serif'
                                     }}>
                                         {item.area}
                                     </label>
 
-                                    {/* Textarea editable de forma independiente */}
                                     <textarea
                                         value={item.texto}
                                         onChange={(e) => manejarTextoCambiado(index, e.target.value)}
@@ -336,7 +336,8 @@ function Borrador() {
                                         fontFamily: 'inherit',
                                         lineHeight: '1.5',
                                         resize: 'vertical',
-                                        boxSizing: 'border-box'
+                                        boxSizing: 'border-box',
+                                        font: '500 14px Lexend-Regular, sans-serif'
                                         }}
                                     />
                                 </div>
