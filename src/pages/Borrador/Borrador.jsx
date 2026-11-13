@@ -110,6 +110,7 @@ function Borrador() {
                 console.error(error);
                 setError(error.message);
             }
+            //console.log("alumnos: ", alumnos)
         }
         actualizarAlumnos();
     }, [aulaSeleccion]);
@@ -139,12 +140,10 @@ function Borrador() {
 
         try {
             const datos = {
-                alumnoId: alumnos[alumnoSeleccion].id,
+                alumnoId: alumnoSeleccionadoObj.id,
                 fechaInicio: formatearFecha(fechaDesde),
                 fechaFin: formatearFecha(fechaHasta)
             };
-            console.log("alumnoSeleccion", alumnoSeleccion)
-            console.log("alumno", alumnos[alumnoSeleccion].id)
             const resultado = await generarBorrador(datos);
             
             setBorradorActual(resultado);
@@ -290,7 +289,7 @@ function Borrador() {
                     <button className="volver-button" type="button" onClick={() => setAbierto(false)}><ChevronLeft/>Informes</button>
                     <div className='guardar-info'>
                         <p>Borrador generado</p>
-                        <p className='info-nombre'>{alumnos[alumnoSeleccion - 1]?.nombre} {alumnos[alumnoSeleccion - 1]?.apellido}</p>
+                        <p className='info-nombre'>{alumnoSeleccionadoObj?.nombre} {alumnoSeleccionadoObj?.apellido}</p>
                         <p className='info-fecha'>{borradorActual?.fechaCreacion}</p>
                     </div>
                     <div className='texto-generado'>

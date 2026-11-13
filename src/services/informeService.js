@@ -22,7 +22,9 @@ export async function generarBorrador(datos) {
         );
     }
 
-    return await respuesta.text();
+    /* console.log("respuesta: ", respuesta)
+    console.log("respuesta.text()", respuesta.text()) */
+    return await respuesta.json();
 }
 
 export async function getBorradores() {
