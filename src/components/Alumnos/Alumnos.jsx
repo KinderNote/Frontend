@@ -4,7 +4,8 @@ import {
   getAlumnos,
   crearAlumno,
   editarAlumno,
-  eliminarAlumno as eliminarAlumnoApi
+  eliminarAlumno as eliminarAlumnoApi,
+  getAlumnosPorAula
 } from '../../services/alumnoService';
 import Observaciones from '../Observaciones/Observaciones';
 
@@ -27,13 +28,9 @@ function Alumnos({ aula, onVolver, maestraId }) {
         setCargando(true);
         setError("");
 
-        const datos = await getAlumnos();
+        const alumnos = await getAlumnosPorAula(aula.id);
 
-        const alumnosDelAula = datos.filter(
-          alumno => Number(alumno.aula?.id) === Number(aula.id)
-        );
-
-        setAlumnos(alumnosDelAula);
+        setAlumnos(alumnos);
 
       } catch (error) {
         console.error("Error al cargar alumnos:", error);

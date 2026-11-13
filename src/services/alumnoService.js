@@ -19,6 +19,16 @@ export async function getAlumnos() {
     return await respuesta.json();
 }
 
+export async function getAlumnosPorAula(aulaId) {
+    const respuesta = await fetch(`${API_URL}/getAllByAula/${aulaId}`);
+
+    if (!respuesta.ok) {
+        throw new Error('No se pudieron obtener los alumnos.');
+    }
+
+    return await respuesta.json();
+}
+
 // Crear alumno
 export async function crearAlumno(alumno, aulaId) {
     const datos = {
