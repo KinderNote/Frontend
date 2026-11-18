@@ -35,6 +35,8 @@ function Borrador() {
 
     const [areas, setAreas] = useState([])
 
+    const [loading, setLoading] = useState(false)
+
     useEffect(() => {
         async function cargarDatos() {
             try {
@@ -89,6 +91,7 @@ function Borrador() {
                 setError(error.message);
             } finally {
                 setCargando(false);
+                setAbierto(false)
             }
         }
         actualizarBorradores();
@@ -99,6 +102,7 @@ function Borrador() {
             setBorradorActual(null);
             setBorradores([]);
             setAlumnoSeleccion('');
+            setAbierto(false)
             try {
                 if (aulaSeleccion === "") {
                     setAlumnos([]);
@@ -139,18 +143,27 @@ function Borrador() {
         }
 
         try {
+            setLoading(true)
+
             const datos = {
                 alumnoId: alumnoSeleccionadoObj.id,
                 fechaInicio: formatearFecha(fechaDesde),
                 fechaFin: formatearFecha(fechaHasta)
             };
-            const resultado = await generarBorrador(datos);
             
+            const resultado = await generarBorrador(datos);
+
+            borradores.push(resultado)
+            setBorradores(borradores)
             setBorradorActual(resultado);
-            setAbierto(true);
+            setAbierto(true)
+            
         } catch (error) {
             console.error(error);
-            alert(error.message);
+            alert("No se pudo generar el borrador");
+        }
+        finally {
+            setLoading(false)
         }
     }
 
@@ -159,9 +172,28 @@ function Borrador() {
         return `${dia}-${mes}-${anio}`;
     }
 
+    function areasValidas() {
+        return areas.every(areaValida)
+    }
+
+    function areaValida(area) {
+        console.log("area: ", area.texto)
+        if (area.texto) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
     async function guardarBorradorActual() {
         if (!borradorActual) {
             alert('Primero tenés que generar un borrador.');
+            return;
+        }
+
+        if (!areasValidas()) {
+            alert('Ninguna sección del informe debe estar vacía.');
             return;
         }
 
@@ -238,7 +270,7 @@ function Borrador() {
                                 />
                             </div>
                         </div>
-                        <button className='boton-generar' type="button" onClick={solicitarBorrador}>Generar borrador</button>
+                        <button className='boton-generar' type="button" disabled={loading} onClick={solicitarBorrador}>{!loading ? "Generar borrador" : "Generando"}</button>
                     </form>
                     
                     <div className='guardados-container'>
@@ -287,15 +319,15 @@ function Borrador() {
             <div className='guardar-desktop'>
                 <div className={`guardar-container ${abierto ? 'abierto' : ''}`}>
                     <button className="volver-button" type="button" onClick={() => setAbierto(false)}><ChevronLeft/>Informes</button>
-                    <div className='guardar-info'>
+                    {abierto ? (<div className='guardar-info'>
                         <p>Borrador generado</p>
                         <p className='info-nombre'>{alumnoSeleccionadoObj?.nombre} {alumnoSeleccionadoObj?.apellido}</p>
                         <p className='info-fecha'>{borradorActual?.fechaCreacion}</p>
-                    </div>
+                    </div>) : (<div className='guardar-info'/>)}
                     <div className='texto-generado'>
                         <div style={{ whiteSpace: 'pre-wrap' }}>
                             <p style={{ color: '#666', fontSize: '14px', font: '500 14px Lexend-Regular, sans-serif' }}>
-                                Modifique las observaciones de cada área según sea necesario antes de exportar.
+                                {!abierto ? "Para generar un borrador:\n1. Seleccione el aula a la que pertenece el alumno.\n2. seleccione el alumno al que le va a generar un borrador.\n3. Seleccione las fechas de inicio y fin para usar las anotaciones del alumno creadas entre esas fechas.\n4. Pulse el botón generar borrador y espere a que el borrador esté listo.\n\nPara editar un borrador generado previamente:\n1. Seleccione el aula a la que pertenece el alumno.\n2. Seleccione el alumno.\n3. Seleccione el borrador del alumno a editar en la sección inferior.\n4. Se visualizará el borrador en la sección derecha de la pantalla para editar." : "Puede exportar el informe a PDF o DOCX usando los botones de arriba o puede modificar el texto de cada área según sea necesario. Asegúrese de presionar el botón de gauardar borrador para haccer efectivos los cambios."}
                             </p>
 
                             {areas.map((item, index) => (
@@ -345,7 +377,7 @@ function Borrador() {
                     </div>
                 </div>
                 <div className={`footer-botones ${abierto ? 'abierto' : ''}`}>
-                    <button className='boton-guardar' type="button" onClick={guardarBorradorActual}>Guardar borrador</button>
+                    <button className='boton-guardar' type="button" disabled={!abierto} onClick={guardarBorradorActual}>Guardar borrador</button>
                     <div className='exportar-borrador'>
                         {borradorActual && alumnoSeleccionadoObj ? (
                             <BotonExportarPdf 
