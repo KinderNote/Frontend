@@ -106,8 +106,8 @@ function Etiquetas() {
                                     {etiqueta.nombre}
                                 </span>
                                 <span className='etiquetas-cantidad'>
-                                    {etiqueta.cantidadAnotaciones ?? 0}
-                                    <span className='etiquetas-cantidad-desktop'> anotaciones</span>
+                                    {/*etiqueta.cantidadAnotaciones ?? 0*
+                                    <span className='etiquetas-cantidad-desktop'> anotaciones</span>*/}
                                 </span>
                                 <button
                                     className='etiquetas-eliminar'
@@ -123,7 +123,7 @@ function Etiquetas() {
                     </div>
                 )}
 
-                <p className='etiquetas-nota'>El número es la cantidad de anotaciones con esa etiqueta.</p>
+                {/*<p className='etiquetas-nota'>El número es la cantidad de anotaciones con esa etiqueta.</p>*/}
             </div>
             <Nav />
         </div>

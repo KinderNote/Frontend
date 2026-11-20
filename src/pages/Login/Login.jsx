@@ -28,6 +28,11 @@ function Login() {
         }
     }
 
+    function debug() {
+        setEmail("alternative@gmail.com")
+        setContrasenia("1234567890")
+    }
+
     return (
         <div className="login">
             <div className="header">
@@ -72,6 +77,13 @@ function Login() {
                     <div className="register">
                         <p>¿No tenés cuenta? <a href="#/register" className="register-link">Registrate</a></p>
                     </div>
+
+                    <button
+                        className="login-button"
+                        onClick={debug}
+                    >
+                        Acceso rápido (solo demo)
+                    </button>
                 </div>
             </form>
         </div>

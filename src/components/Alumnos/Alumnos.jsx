@@ -169,9 +169,9 @@ function Alumnos({ aula, onVolver, maestraId }) {
 
           <div className="alumno-grid alumno-header">
             <span>Alumno</span>
-            <span>Nacimiento</span>
-            <span>Anotaciones</span>
-            <span>Última</span>
+            <span>Edad</span>
+            {/*<span>Anotaciones</span>*/}
+            {/*<span>Última</span>*/}
             <span>Acciones</span>
           </div>
 
@@ -185,9 +185,9 @@ function Alumnos({ aula, onVolver, maestraId }) {
                 {alumno.nombre} {alumno.apellido}
               </button>
 
-              <span>{formatearFecha(alumno.fechaNacimiento) || '-'}</span>
-              <span>{alumno.cantidadAnotaciones ?? 0}</span>
-              <span>{alumno.ultimaAnotacion || '-'}</span>
+              <span>{alumno.edad + " años" || '-'}</span>
+              {/*<span>{alumno.cantidadAnotaciones ?? 0}</span>*/}
+              {/*<span>{alumno.ultimaAnotacion || '-'}</span>*/}
 
               <div className="alumno-acciones">
                 <button
@@ -235,9 +235,9 @@ function Alumnos({ aula, onVolver, maestraId }) {
               </span>
 
               <span className="mobile-alumno-datos">
-                {formatearFecha(alumno.fechaNacimiento) || '-'}
-                <span> · </span>
-                {alumno.cantidadAnotaciones ?? 0} anotaciones
+                {alumno.edad || '-'}
+                <span> años · </span>
+                {/*alumno.cantidadAnotaciones ?? 0} anotaciones*/}
               </span>
             </button>
           ))}
