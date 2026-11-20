@@ -113,12 +113,12 @@ function Alumnos({ aula, onVolver, maestraId }) {
     }
   };
 
-  function formatearFecha(fecha) {
+  /*function formatearFecha(fecha) {
     if (!fecha) return "Sin fecha";
 
     const [dia, mes, anio] = fecha.split("-");
     return `${dia}/${mes}/${anio}`;
-  }
+  }*/
 
   function convertirFechaInput(fecha) {
     if (!fecha) return "";
